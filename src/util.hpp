@@ -5,7 +5,7 @@
 
 const float EPSILON = 0.00001;
  
-bool float_equal(double a, double b) {
+inline bool float_equal(float a, float b) {
     return std::fabs(a - b) < EPSILON;
 }
 
