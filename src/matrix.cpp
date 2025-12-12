@@ -24,17 +24,6 @@ Matrix Matrix::operator*(const Matrix& other) const {
     return m;
 }
 
-// Note: Tuple is always a 4x1 in our definition
-Tuple Matrix::operator*(const Tuple& other) const {
-    Matrix b(4, 1);
-    b = {other.x, other.y, other.z, other.w};
-    Matrix prod = (*this) * b;
-    // std::cout << std::format("{} {} {} {}", prod(0, 0), prod(1, 0), prod(2, 0),
-    //                          prod(3, 0))
-    //           << std::endl;
-    return Tuple(prod(0, 0), prod(1, 0), prod(2, 0), prod(3, 0));
-}
-
 Matrix Matrix::transpose() const {
     Matrix transpose(cols, rows);
     for (size_t i = 0; i < rows; i++) {

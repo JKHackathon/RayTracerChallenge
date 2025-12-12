@@ -48,10 +48,12 @@ struct Tuple {
 
 struct Point : public Tuple {
     Point(float x, float y, float z) : Tuple(x, y, z, 1.0) {}
+    explicit Point(const Tuple& t) : Tuple(t.x, t.y, t.z, 1) {}
 };
 
 struct Vector : public Tuple {
     Vector(float x, float y, float z) : Tuple(x, y, z, 0.0) {}
+    explicit Vector(const Tuple& t) : Tuple(t.x, t.y, t.z, 0) {}
 
     using Tuple::operator-;
     Vector operator-() const {  // slight deviation from book as points should

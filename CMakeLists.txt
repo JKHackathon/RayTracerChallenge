@@ -16,6 +16,7 @@ add_executable(tests
                 tests/tuples.cpp 
                 tests/canvas.cpp
                 tests/matrices.cpp
+                tests/transformations.cpp
                 src/canvas.cpp
                 src/matrix.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
