@@ -15,7 +15,9 @@ enable_testing()
 add_executable(tests 
                 tests/tuples.cpp 
                 tests/canvas.cpp
-                src/canvas.cpp)
+                tests/matrices.cpp
+                src/canvas.cpp
+                src/matrix.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 # These tests need their own main

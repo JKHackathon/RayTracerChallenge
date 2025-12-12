@@ -17,7 +17,8 @@ struct Canvas {
           height(height),
           pixels(width * height, defaultColor) {}
 
-    int coords_to_index(int x, int y);
+    // Should i move this to utils, pass in width/height?
+    int coords_to_index(int x, int y) const;
     void write_pixel(int x, int y, Color c);
 
     int get_width() const { return width; }

@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-int Canvas::coords_to_index(int x, int y) {
+int Canvas::coords_to_index(int x, int y) const {
     assert(x < width && x >= 0 && "invald pixel 'x' index");
     assert(y < height && y >= 0 && "invald pixel 'y' index");
     return y * width + x;

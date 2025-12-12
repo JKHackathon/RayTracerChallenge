@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "../src/color.hpp"
+#include "../src/tuples.hpp"
 
 TEST_CASE("Colors are (red, green, blue) tuples", "[canvas]") {
     Color c(-0.5, 0.4, 1.7);
@@ -69,10 +70,12 @@ TEST_CASE("Construcing the PPM pixel data", "[canvas]") {
     c.write_pixel(2, 1, c2);
     c.write_pixel(4, 2, c3);
 
-    REQUIRE(c.pixel_data_to_ppm() ==
-            "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n"
-            "0 0 0 0 0 0 0 127 0 0 0 0 0 0 0 \n" // changed to 127 because exact val doesnt really matter
-            "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 \n");
+    REQUIRE(
+        c.pixel_data_to_ppm() ==
+        "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n"
+        "0 0 0 0 0 0 0 127 0 0 0 0 0 0 0 \n"  // changed to 127 because exact
+                                              // val doesnt really matter
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 \n");
 }
 
 TEST_CASE("Splitting long lines in PPM files", "[canvas]") {
