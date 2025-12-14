@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include <cassert>
+
 #include "util.hpp"
 
 // Forward declarations
@@ -18,11 +20,14 @@ struct Tuple {
     Tuple(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 
     bool is_point() const { return float_equal(w, 1.0); }
-
     bool is_vector() const { return float_equal(w, 0.0); }
 
     static Tuple from_point(const Point& p);
     static Tuple from_vector(const Vector& v);
+
+    operator Point() const;
+
+    operator Vector() const;
 
     bool operator==(const Tuple& other) const {
         return float_equal(x, other.x) && float_equal(y, other.y) &&
@@ -48,12 +53,12 @@ struct Tuple {
 
 struct Point : public Tuple {
     Point(float x, float y, float z) : Tuple(x, y, z, 1.0) {}
-    explicit Point(const Tuple& t) : Tuple(t.x, t.y, t.z, 1) {}
+    // explicit Point(const Tuple& t) : Tuple(t.x, t.y, t.z, 1) {}
 };
 
 struct Vector : public Tuple {
     Vector(float x, float y, float z) : Tuple(x, y, z, 0.0) {}
-    explicit Vector(const Tuple& t) : Tuple(t.x, t.y, t.z, 0) {}
+    // explicit Vector(const Tuple& t) : Tuple(t.x, t.y, t.z, 0) {}
 
     using Tuple::operator-;
     Vector operator-() const {  // slight deviation from book as points should
@@ -88,6 +93,16 @@ inline Tuple Tuple::from_point(const Point& p) {
 
 inline Tuple Tuple::from_vector(const Vector& v) {
     return Tuple(v.x, v.y, v.z, 0.0);
+}
+
+inline Tuple::operator Point() const {
+    assert(is_point() && "Cannot convert to a point");
+    return Point(x, y, z);
+}
+
+inline Tuple::operator Vector() const {
+    assert(is_vector() && "Cannot convert to a vector");
+    return Vector(x, y, z);
 }
 
 #endif

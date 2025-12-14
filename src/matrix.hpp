@@ -40,15 +40,16 @@ struct Matrix {
     }
 
     Matrix operator*(const Matrix& other) const;
+    Tuple operator*(const Tuple& other) const;
 
-    template <TupleType T>
-    // Note: Tuple is always a 4x1 in our definition
-    T operator*(const T& other) const {
-        Matrix b(4, 1);
-        b = {other.x, other.y, other.z, other.w};
-        Matrix prod = (*this) * b;
-        return T(Tuple(prod(0, 0), prod(1, 0), prod(2, 0), prod(3, 0)));
-    } 
+    // template <TupleType T>
+    // // Note: Tuple is always a 4x1 in our definition
+    // T operator*(const T& other) const {
+    //     Matrix b(4, 1);
+    //     b = {other.x, other.y, other.z, other.w};
+    //     Matrix prod = (*this) * b;
+    //     return T(Tuple(prod(0, 0), prod(1, 0), prod(2, 0), prod(3, 0)));
+    // } 
 
     Matrix transpose() const;
     float determinant() const;
