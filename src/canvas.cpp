@@ -14,7 +14,7 @@ void Canvas::write_pixel(int x, int y, Color c) {
 }
 
 std::string Canvas::to_ppm_header() {
-    return std::format("P3\n{} {}\n255", width, height);
+    return std::format("P3\n{} {}\n255\n", width, height);
 }
 
 std::string Canvas::pixel_data_to_ppm() {
@@ -27,9 +27,10 @@ std::string Canvas::pixel_data_to_ppm() {
             int g_final = std::clamp<int>(c.g * 255, 0, 255);
             int b_final = std::clamp<int>(c.b * 255, 0, 255);
 
-            std::string ppm_color = std::format("{} {} {} ", r_final, g_final, b_final);
+            std::string ppm_color =
+                std::format("{} {} {} ", r_final, g_final, b_final);
             chars_added += ppm_color.size();
-            if (chars_added > 70)  {
+            if (chars_added > 70) {
                 ppm += "\n";
                 chars_added = 0;
             }

@@ -9,12 +9,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Path to Catch2 relative to project1
 # add_subdirectory("../packages/catch2" catch2_build)
 
-# add_executable(raytracer
-#                 src/main.cpp
-#                 src/canvas.cpp
-#                 src/matrix.cpp
-#                 src/ray.cpp
-# )
+add_executable(raytracer
+                src/main.cpp
+                src/canvas.cpp
+                src/matrix.cpp
+                src/ray.cpp
+)
 
 find_package(Catch2 3 REQUIRED CONFIG)
 enable_testing()
