@@ -1,9 +1,9 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
+#include "materials.hpp"
 #include "transformations.hpp"
 #include "tuples.hpp"
-#include "materials.hpp"
 
 struct Sphere {
     Point origin;
@@ -12,8 +12,11 @@ struct Sphere {
     Material material;
 
     Sphere() : origin(Point(0, 0, 0)), radius(1) {}
-
-    void set_transform(Transform t) { transform = t; }
+    Sphere(Transform transform, Material material)
+        : origin(Point(0, 0, 0)),
+          transform(transform),
+          material(material),
+          radius(1) {}
 
     Vector normal_at(Point p) const {
         Vector n_o = transform.inverse() * p - origin;

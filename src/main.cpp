@@ -33,8 +33,7 @@ int main(int argc, char* argv[]) {
     // Sphere
     auto s_ptr = std::make_unique<Sphere>();
     Sphere* s = s_ptr.get();
-    s->set_transform(Transform::translation(0, 0, 10));
-    s->material = Material();
+    s->transform = Transform::translation(0, 0, 10);
     s->material.color = Color(1, 0.2, 1);
 
     // Light

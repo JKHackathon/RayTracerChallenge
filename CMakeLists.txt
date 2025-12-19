@@ -27,6 +27,7 @@ add_executable(tests
                 tests/transformations.cpp
                 tests/rays.cpp
                 tests/shading.cpp
+                tests/world.cpp
                 src/canvas.cpp
                 src/matrix.cpp
                 src/ray.cpp

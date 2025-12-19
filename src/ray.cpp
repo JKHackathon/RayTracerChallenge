@@ -1,6 +1,8 @@
 #include "ray.hpp"
 
-IntersectionRecords Ray::intersect(const Sphere* s) const {
+#include <algorithm>
+
+IntersectionRecord Ray::intersect(const Sphere* s) const {
     Ray obj_space_ray = this->transform(s->transform.inverse());
 
     Vector sphere_to_ray = obj_space_ray.origin - s->origin;
@@ -10,16 +12,16 @@ IntersectionRecords Ray::intersect(const Sphere* s) const {
     float discriminant = pow(b, 2) - 4 * a * c;
 
     if (discriminant < 0) {
-        return IntersectionRecords();
+        return IntersectionRecord();
     }
 
     float t1 = (-b - sqrt(discriminant)) / (2 * a);
     float t2 = (-b + sqrt(discriminant)) / (2 * a);
 
-    return IntersectionRecords(Intersection(t1, s), Intersection(t2, s));
+    return IntersectionRecord(Intersection(t1, s), Intersection(t2, s));
 }
 
-std::optional<Intersection> IntersectionRecords::hit() const {
+std::optional<Intersection> IntersectionRecord::hit() const {
     float hit_val = MAXFLOAT;
     std::optional<Intersection> hit;
     for (const auto& intersection : intersections) {
@@ -31,4 +33,15 @@ std::optional<Intersection> IntersectionRecords::hit() const {
         }
     }
     return hit;
+}
+
+IntersectionRecord Ray::intersect_world(const World& w) const {
+    IntersectionRecord xs;
+    for (auto& object : w.objects) {
+        xs.append_record(this->intersect(object.get()));
+    }
+
+    std::sort(xs.intersections.begin(), xs.intersections.end(),
+              [](Intersection a, Intersection b) { return a.t < b.t; });
+    return xs;
 }

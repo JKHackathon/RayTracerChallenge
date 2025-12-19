@@ -45,15 +45,15 @@ TEST_CASE("The normal is a normalized vector", "[sphere][shading]") {
 
 TEST_CASE("Computing the normal on a translated sphere", "[sphere][shading]") {
     Sphere s;
-    s.set_transform(Transform::translation(0, 1, 0));
+    s.transform = Transform::translation(0, 1, 0);
     Vector n = s.normal_at(Point(0, 1.70711, -0.70711));
     REQUIRE(n == Vector(0, 0.70711, -0.70711));
 }
 
 TEST_CASE("Computing the normal on a transformed sphere", "[sphere][shading]") {
     Sphere s;
-    s.set_transform(Transform::scaling(1, 0.5, 1) *
-                    Transform::rotation_z(M_PI / 5));
+    s.transform =
+        Transform::scaling(1, 0.5, 1) * Transform::rotation_z(M_PI / 5);
     Vector n = s.normal_at(Point(0, sqrt(2) / 2, -sqrt(2) / 2));
     REQUIRE(n == Vector(0, 0.97014, -0.24254));
 }
