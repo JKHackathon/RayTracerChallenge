@@ -14,6 +14,7 @@ add_executable(raytracer
                 src/canvas.cpp
                 src/matrix.cpp
                 src/ray.cpp
+                src/lighting.cpp
 )
 
 find_package(Catch2 3 REQUIRED CONFIG)
@@ -25,9 +26,11 @@ add_executable(tests
                 tests/matrices.cpp
                 tests/transformations.cpp
                 tests/rays.cpp
+                tests/shading.cpp
                 src/canvas.cpp
                 src/matrix.cpp
-                src/ray.cpp)
+                src/ray.cpp
+                src/lighting.cpp)
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 

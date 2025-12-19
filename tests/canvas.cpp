@@ -57,7 +57,7 @@ TEST_CASE("Writing pixels to a canvas", "[canvas]") {
 TEST_CASE("Constructing the PPM header", "[canvas]") {
     Canvas c(5, 3);
     std::cout << c.to_ppm_header() << std::endl;
-    REQUIRE(c.to_ppm_header() == "P3\n5 3\n255");
+    REQUIRE(c.to_ppm_header() == "P3\n5 3\n255\n");
 }
 
 TEST_CASE("Construcing the PPM pixel data", "[canvas]") {

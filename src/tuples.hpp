@@ -51,6 +51,11 @@ struct Tuple {
     }
 };
 
+inline Tuple operator*(const float c, const Tuple& tuple) {
+    return Tuple(tuple.x * c, tuple.y * c, tuple.z * c, tuple.w * c);
+}
+
+// TODO: should include overloads for operator* and operator/???
 struct Point : public Tuple {
     Point(float x, float y, float z) : Tuple(x, y, z, 1.0) {}
     // explicit Point(const Tuple& t) : Tuple(t.x, t.y, t.z, 1) {}
@@ -84,6 +89,10 @@ struct Vector : public Tuple {
     Vector cross(const Vector& other) const {
         return Vector(y * other.z - z * other.y, z * other.x - x * other.z,
                       x * other.y - y * other.x);
+    }
+
+    Vector reflect(const Vector& normal) const {
+        return *this - 2 * this->dot(normal) * normal;
     }
 };
 
