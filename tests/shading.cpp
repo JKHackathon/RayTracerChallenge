@@ -121,7 +121,7 @@ TEST_CASE_METHOD(MaterialFixture,
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, -10), Color(1, 1, 1));
-    auto result = Shading::phong_lighting(m, light, pos, eye, normal);
+    auto result = Shading::phong_lighting(m, &light, pos, eye, normal);
     REQUIRE(result == Color(1.9, 1.9, 1.9));
 }
 
@@ -132,7 +132,7 @@ TEST_CASE_METHOD(
     Vector eye(0, sqrt(2) / 2, -sqrt(2) / 2);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, -10), Color(1, 1, 1));
-    auto result = Shading::phong_lighting(m, light, pos, eye, normal);
+    auto result = Shading::phong_lighting(m, &light, pos, eye, normal);
     REQUIRE(result == Color(1, 1, 1));
 }
 
@@ -142,7 +142,7 @@ TEST_CASE_METHOD(MaterialFixture,
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 10, -10), Color(1, 1, 1));
-    auto result = Shading::phong_lighting(m, light, pos, eye, normal);
+    auto result = Shading::phong_lighting(m, &light, pos, eye, normal);
     REQUIRE(result == Color(0.7364, 0.7364, 0.7364));
 }
 
@@ -152,7 +152,7 @@ TEST_CASE_METHOD(MaterialFixture,
     Vector eye(0, -sqrt(2) / 2, -sqrt(2) / 2);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 10, -10), Color(1, 1, 1));
-    auto result = Shading::phong_lighting(m, light, pos, eye, normal);
+    auto result = Shading::phong_lighting(m, &light, pos, eye, normal);
     REQUIRE(result == Color(1.6364, 1.6364, 1.6364));
 }
 
@@ -161,6 +161,6 @@ TEST_CASE_METHOD(MaterialFixture, "Lighting with the light behind the surface",
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, 10), Color(1, 1, 1));
-    auto result = Shading::phong_lighting(m, light, pos, eye, normal);
+    auto result = Shading::phong_lighting(m, &light, pos, eye, normal);
     REQUIRE(result == Color(.1, .1, .1));
 }

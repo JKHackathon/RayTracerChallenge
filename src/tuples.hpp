@@ -57,11 +57,13 @@ inline Tuple operator*(const float c, const Tuple& tuple) {
 
 // TODO: should include overloads for operator* and operator/???
 struct Point : public Tuple {
+    Point() : Tuple(0, 0, 0, 1) {}
     Point(float x, float y, float z) : Tuple(x, y, z, 1.0) {}
     // explicit Point(const Tuple& t) : Tuple(t.x, t.y, t.z, 1) {}
 };
 
 struct Vector : public Tuple {
+    Vector() : Tuple(0, 0, 0, 0) {}
     Vector(float x, float y, float z) : Tuple(x, y, z, 0.0) {}
     // explicit Vector(const Tuple& t) : Tuple(t.x, t.y, t.z, 0) {}
 

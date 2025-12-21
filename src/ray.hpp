@@ -81,4 +81,17 @@ struct Ray {
     IntersectionRecord intersect_world(const World& w) const;
 };
 
+struct PrecomputedIntersection {
+    float t;
+    const Sphere* object;
+    Point point;
+    Vector eye;
+    Vector normal;
+    bool inside;
+
+    PrecomputedIntersection() {}
+
+    static PrecomputedIntersection prepare_computations(Intersection i, Ray r);
+};
+
 #endif

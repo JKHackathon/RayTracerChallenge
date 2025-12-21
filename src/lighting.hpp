@@ -4,7 +4,9 @@
 #include "lights.hpp"
 #include "materials.hpp"
 
+
+
 namespace Shading {
-Color phong_lighting(Material m, PointLight light, Point point, Vector eye,
+Color phong_lighting(Material m, const PointLight* light, Point point, Vector eye,
                      Vector normal);
 }

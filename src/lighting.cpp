@@ -1,10 +1,10 @@
 #include "lighting.hpp"
 
-Color Shading::phong_lighting(Material m, PointLight light, Point point,
+Color Shading::phong_lighting(Material m, const PointLight* light, Point point,
                               Vector eye, Vector normal) {
-    Color effective_color = m.color * light.intensity;
-    Vector dir_to_light = Vector(light.pos - point).normalized();
-    
+    Color effective_color = m.color * light->intensity;
+    Vector dir_to_light = Vector(light->pos - point).normalized();
+
     auto ambient = effective_color * m.ambient;
 
     // light_dot_normal represents the cosine of the angle between the
@@ -20,7 +20,7 @@ Color Shading::phong_lighting(Material m, PointLight light, Point point,
         auto reflect_dot_eye = reflect_dir.dot(eye);
         if (reflect_dot_eye > 0) {
             // Compute specular contribution
-            specular = light.intensity * m.specular *
+            specular = light->intensity * m.specular *
                        pow(reflect_dot_eye, m.shininess);
         }
     }

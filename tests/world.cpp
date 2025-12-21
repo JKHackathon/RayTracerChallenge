@@ -5,14 +5,14 @@
 
 #include "../src/ray.hpp"
 
-TEST_CASE("Creating a world", "[world]") {
+TEST_CASE("Creating a world", "[world][scene]") {
     World w;
     REQUIRE(w.objects.empty());
     REQUIRE(w.lights.empty());
 }
 
 // Test doesnt really work when using ptrs
-// TEST_CASE("The default world", "[world]") {
+// TEST_CASE("The default world", "[world][scene]") {
 //     World w = World::default_world();
 
 //     auto light =
@@ -32,7 +32,7 @@ TEST_CASE("Creating a world", "[world]") {
 //     REQUIRE(w.objects.contains(s2));
 // }
 
-TEST_CASE("Intersect a world with a ray", "[world]") {
+TEST_CASE("Intersect a world with a ray", "[world][scene]") {
     World w = World::default_world();
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
     auto xs = r.intersect_world(w);
@@ -43,3 +43,63 @@ TEST_CASE("Intersect a world with a ray", "[world]") {
     REQUIRE(float_equal(xs.intersections[2].t, 5.5));
     REQUIRE(float_equal(xs.intersections[3].t, 6));
 }
+
+TEST_CASE("Precomputing the state of an intersection",
+          "[scene][intersections]") {
+    Ray r(Point(0, 0, -5), Vector(0, 0, 1));
+    auto shape = std::make_unique<Sphere>();
+    Intersection i(4, shape.get());
+    auto comps = PrecomputedIntersection::prepare_computations(i, r);
+
+    REQUIRE(comps.t == i.t);
+    REQUIRE(comps.object == i.object);
+    REQUIRE(comps.point == Point(0, 0, -1));
+    REQUIRE(comps.eye == Vector(0, 0, -1));
+    REQUIRE(comps.normal == Vector(0, 0, -1));
+}
+
+TEST_CASE("The hit, when an intersection occurs on the outside",
+          "[scene][intersections]") {
+    Ray r(Point(0, 0, -5), Vector(0, 0, 1));
+    auto shape = std::make_unique<Sphere>();
+    Intersection i(4, shape.get());
+    auto comps = PrecomputedIntersection::prepare_computations(i, r);
+    REQUIRE(!comps.inside);
+}
+
+TEST_CASE("The hit, when an intersection occurs on the inside",
+          "[scene][intersections]") {
+    Ray r(Point(0, 0, 0), Vector(0, 0, 1));
+    auto shape = std::make_unique<Sphere>();
+    Intersection i(1, shape.get());
+    auto comps = PrecomputedIntersection::prepare_computations(i, r);
+
+    REQUIRE(comps.point == Point(0, 0, 1));
+    REQUIRE(comps.eye == Vector(0, 0, -1));
+    REQUIRE(comps.inside);
+    REQUIRE(comps.normal == Vector(0, 0, -1));
+}
+
+// TODO: the below tests are problematic as they require specific order of
+// objects (i am using unordered_set)
+// TEST_CASE("Shading an intersection", "[scene][world]") {
+//     World w = World::default_world();
+//     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
+//     auto shape = w.objects.begin()->get();
+//     Intersection i = Intersection(4, shape);
+//     auto comps = PrecomputedIntersection::prepare_computations(i, r);
+//     Color c = w.shade_hit(comps);
+
+//     REQUIRE(c == Color(0.38066, 0.47583, 0.2855));
+// }
+
+// TEST_CASE("Shading an intersection from the inside", "[scene][world]") {
+//     World w = World::default_world();
+//     Ray r(Point(0, 0.25, 0), Vector(1, 1, 1));
+//     auto shape = w.objects.begin()->get();
+//     Intersection i = Intersection(.5, shape);
+//     auto comps = PrecomputedIntersection::prepare_computations(i, r);
+//     Color c = w.shade_hit(comps);
+
+//     REQUIRE(c == Color(0.90498, 0.90498, 0.90498));
+// }

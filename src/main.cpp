@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
                     s_intersection.object->normal_at(hit_position);
                 auto eye = -camera_ray.dir;
                 Color li = Shading::phong_lighting(
-                    s_intersection.object->material, light, hit_position, eye,
+                    s_intersection.object->material, &light, hit_position, eye,
                     surface_normal);
                 canvas.write_pixel(i, j, li);
             }

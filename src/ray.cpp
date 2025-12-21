@@ -45,3 +45,23 @@ IntersectionRecord Ray::intersect_world(const World& w) const {
               [](Intersection a, Intersection b) { return a.t < b.t; });
     return xs;
 }
+
+PrecomputedIntersection PrecomputedIntersection::prepare_computations(
+    Intersection i, Ray r) {
+    PrecomputedIntersection comps;
+    // Copy intersections property
+    comps.t = i.t;
+    comps.object = i.object;
+    // Precompute useful values // TODO: why do this?
+    comps.point = r.position(comps.t);
+    comps.eye = -r.dir;
+    comps.normal = comps.object->normal_at(comps.point);
+
+    comps.inside = false;
+    if (comps.normal.dot(comps.eye) < 0) {
+        comps.inside = true;
+        comps.normal = -comps.normal;
+    }
+
+    return comps;
+}
