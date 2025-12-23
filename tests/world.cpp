@@ -33,9 +33,9 @@ TEST_CASE("Creating a world", "[world][scene]") {
 // }
 
 TEST_CASE("Intersect a world with a ray", "[world][scene]") {
-    World w = World::default_world();
+    const auto [w, s1, s2] = World::default_world();
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
-    auto xs = r.intersect_world(w);
+    auto xs = r.intersect_world(&w);
 
     REQUIRE(xs.count == 4);
     REQUIRE(float_equal(xs.intersections[0].t, 4));
@@ -82,16 +82,16 @@ TEST_CASE("The hit, when an intersection occurs on the inside",
 
 // TODO: the below tests are problematic as they require specific order of
 // objects (i am using unordered_set)
-// TEST_CASE("Shading an intersection", "[scene][world]") {
-//     World w = World::default_world();
-//     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
-//     auto shape = w.objects.begin()->get();
-//     Intersection i = Intersection(4, shape);
-//     auto comps = PrecomputedIntersection::prepare_computations(i, r);
-//     Color c = w.shade_hit(comps);
+TEST_CASE("Shading an intersection", "[scene][world]") {
+    const auto [w, s1, s2] = World::default_world();
+    Ray r(Point(0, 0, -5), Vector(0, 0, 1));
+    // auto shape = w.objects.begin()->get();
+    Intersection i = Intersection(4, s1);
+    auto comps = PrecomputedIntersection::prepare_computations(i, r);
+    Color c = w.shade_hit(comps);
 
-//     REQUIRE(c == Color(0.38066, 0.47583, 0.2855));
-// }
+    REQUIRE(c == Color(0.38066, 0.47583, 0.2855));
+}
 
 // TEST_CASE("Shading an intersection from the inside", "[scene][world]") {
 //     World w = World::default_world();

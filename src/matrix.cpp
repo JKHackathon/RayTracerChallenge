@@ -43,6 +43,9 @@ Matrix Matrix::transpose() const {
 }
 
 float Matrix::determinant() const {
+    // if (rows != cols) {
+    //     throw std::invalid_argument("cannot find determinant of non-square matrix");
+    // }
     assert(rows == cols && "cannot find determinant of non-square matrix");
     if (rows == 2)
         return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);

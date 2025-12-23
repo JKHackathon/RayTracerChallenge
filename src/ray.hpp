@@ -78,7 +78,7 @@ struct Ray {
     // TODO: look into math of it
     IntersectionRecord intersect(const Sphere* s) const;
     Ray transform(Transform m) const { return Ray(m * origin, m * dir); }
-    IntersectionRecord intersect_world(const World& w) const;
+    IntersectionRecord intersect_world(const World* w) const;
 };
 
 struct PrecomputedIntersection {

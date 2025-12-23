@@ -2,7 +2,8 @@
 
 #include "ray.hpp"
 
-World World::default_world() {
+DefaultWorld World::default_world() {
+    DefaultWorld result;
     auto light =
         std::make_unique<PointLight>(Point(-10, 10, -10), Color(1, 1, 1));
 
@@ -15,17 +16,20 @@ World World::default_world() {
     auto s2 = std::make_unique<Sphere>();
     s2.get()->transform = Transform::scaling(0.5, 0.5, 0.5);
 
-    World w;
-    w.objects.emplace(std::move(s1));
-    w.objects.emplace(std::move(s2));
-    w.lights.emplace(std::move(light));
+    // Get before moving!!!
+    result.s1 = s1.get();
+    result.s2 = s2.get();
 
-    return w;
+    result.w.objects.emplace(s1.get(), std::move(s1));
+    result.w.objects.emplace(s2.get(), std::move(s2));
+    result.w.lights.emplace(light.get(), std::move(light));
+
+    return result;
 }
 
-Color World::shade_hit(PrecomputedIntersection comps) {
+Color World::shade_hit(PrecomputedIntersection comps) const {
     // TODO: change to allow for multiple lights
     return Shading::phong_lighting(comps.object->material,
-                                   lights.begin()->get(), comps.point,
+                                   lights.begin()->first, comps.point,
                                    comps.eye, comps.normal);
 }

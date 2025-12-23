@@ -35,9 +35,9 @@ std::optional<Intersection> IntersectionRecord::hit() const {
     return hit;
 }
 
-IntersectionRecord Ray::intersect_world(const World& w) const {
+IntersectionRecord Ray::intersect_world(const World* w) const {
     IntersectionRecord xs;
-    for (auto& object : w.objects) {
+    for (auto& [key, object] : w->objects) {
         xs.append_record(this->intersect(object.get()));
     }
 

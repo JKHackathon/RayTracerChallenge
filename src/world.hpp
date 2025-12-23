@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_set>
+#include <unordered_map>
 
 #include "lighting.hpp"
 #include "lights.hpp"
@@ -8,32 +8,41 @@
 
 struct PrecomputedIntersection;
 
-struct UniquePtrHash {
-    template <typename T>
-    size_t operator()(const std::unique_ptr<T>& p) const {
-        return std::hash<T*>{}(p.get());
-    }
-};
+// struct UniquePtrHash {
+//     template <typename T>
+//     size_t operator()(const std::unique_ptr<T>& p) const {
+//         return std::hash<T*>{}(p.get());
+//     }
+// };
 
-struct UniquePtrEqual {
-    template <typename T>
-    bool operator()(const std::unique_ptr<T>& a,
-                    const std::unique_ptr<T>& b) const {
-        return a.get() == b.get();
-    }
-};
+// struct UniquePtrEqual {
+//     template <typename T>
+//     bool operator()(const std::unique_ptr<T>& a,
+//                     const std::unique_ptr<T>& b) const {
+//         return a.get() == b.get();
+//     }
+// };
+
+// Return object ptrs for testing
+struct DefaultWorld;
 
 struct World {
     //    private:
     // TODO: does order matter? Might at least for tests
-    std::unordered_set<std::unique_ptr<Sphere>, UniquePtrHash, UniquePtrEqual>
-        objects;
-    std::unordered_set<std::unique_ptr<PointLight>, UniquePtrHash,
-                       UniquePtrEqual>
-        lights;
+    // TODO: is this the best way of storing? quick lookup, but is this what
+    // should own objects/lights
+    std::unordered_map<Sphere*, std::unique_ptr<Sphere>> objects;
+    std::unordered_map<PointLight*, std::unique_ptr<PointLight>> lights;
 
     //    public:
-    static World default_world();
 
-    Color shade_hit(PrecomputedIntersection comps);
+        static DefaultWorld default_world();
+
+    Color shade_hit(PrecomputedIntersection comps) const;
+};
+
+struct DefaultWorld {
+    World w;
+    Sphere* s1;
+    Sphere* s2;
 };
