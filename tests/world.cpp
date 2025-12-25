@@ -8,7 +8,8 @@
 TEST_CASE("Creating a world", "[world][scene]") {
     World w;
     REQUIRE(w.objects.empty());
-    REQUIRE(w.lights.empty());
+    REQUIRE(w.light == nullptr);
+    // REQUIRE(w.lights.empty());
 }
 
 // Test doesnt really work when using ptrs
@@ -93,13 +94,40 @@ TEST_CASE("Shading an intersection", "[scene][world]") {
     REQUIRE(c == Color(0.38066, 0.47583, 0.2855));
 }
 
-// TEST_CASE("Shading an intersection from the inside", "[scene][world]") {
-//     World w = World::default_world();
-//     Ray r(Point(0, 0.25, 0), Vector(1, 1, 1));
-//     auto shape = w.objects.begin()->get();
-//     Intersection i = Intersection(.5, shape);
-//     auto comps = PrecomputedIntersection::prepare_computations(i, r);
-//     Color c = w.shade_hit(comps);
+TEST_CASE("Shading an intersection from the inside", "[scene][world]") {
+    auto [w, s1, s2] = World::default_world();
+    w.light = std::make_unique<PointLight>(Point(0, 0.25, 0), Color(1, 1, 1));
 
-//     REQUIRE(c == Color(0.90498, 0.90498, 0.90498));
-// }
+    Ray r(Point(0, 0, 0), Vector(0, 0, 1));
+    Intersection i = Intersection(.5, s2);
+
+    auto comps = PrecomputedIntersection::prepare_computations(i, r);
+    Color c = w.shade_hit(comps);
+
+    REQUIRE(c == Color(0.90498, 0.90498, 0.90498));
+}
+
+TEST_CASE("The color when a ray misses", "[world][scene]") {
+    const auto [w, s1, s2] = World::default_world();
+    Ray r(Point(0, 0, -5), Vector(0, 1, 0));
+    Color c = w.color_at(r);
+    REQUIRE(c == Color(0, 0, 0));
+}
+
+TEST_CASE("The color when a ray hits", "[world][scene]") {
+    const auto [w, s1, s2] = World::default_world();
+    Ray r(Point(0, 0, -5), Vector(0, 0, 1));
+
+    Color c = w.color_at(r);
+    REQUIRE(c == Color(0.38066, 0.47583, 0.2855));
+}
+
+TEST_CASE("The color with an intersection behind the ray", "[world][scene]") {
+    const auto [w, outer, inner] = World::default_world();
+    outer->material.ambient = 1;
+    inner->material.ambient = 1;
+    Ray r(Point(0, 0, .75), Vector(0, 0, -1));
+
+    Color c = w.color_at(r);
+    REQUIRE(c == inner->material.color);
+}

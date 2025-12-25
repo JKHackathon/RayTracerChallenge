@@ -7,6 +7,7 @@
 #include "sphere.hpp"
 
 struct PrecomputedIntersection;
+struct Ray;
 
 // struct UniquePtrHash {
 //     template <typename T>
@@ -32,13 +33,17 @@ struct World {
     // TODO: is this the best way of storing? quick lookup, but is this what
     // should own objects/lights
     std::unordered_map<Sphere*, std::unique_ptr<Sphere>> objects;
-    std::unordered_map<PointLight*, std::unique_ptr<PointLight>> lights;
+
+    // TODO: allow for multiple lights
+    // std::unordered_map<PointLight*, std::unique_ptr<PointLight>> lights;
+    std::unique_ptr<PointLight> light;
 
     //    public:
 
-        static DefaultWorld default_world();
+    static DefaultWorld default_world();
 
     Color shade_hit(PrecomputedIntersection comps) const;
+    Color color_at(Ray r) const;
 };
 
 struct DefaultWorld {

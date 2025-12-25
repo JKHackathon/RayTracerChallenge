@@ -1,5 +1,6 @@
 #include "lighting.hpp"
 
+// TODO: iterate over all light sources
 Color Shading::phong_lighting(Material m, const PointLight* light, Point point,
                               Vector eye, Vector normal) {
     Color effective_color = m.color * light->intensity;
