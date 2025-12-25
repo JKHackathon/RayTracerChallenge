@@ -3,14 +3,18 @@
 #include <cassert>
 #include <iostream>
 
-int Canvas::coords_to_index(int x, int y) const {
+int Canvas::coords_to_index(size_t x, size_t y) const {
     assert(x < width && x >= 0 && "invald pixel 'x' index");
     assert(y < height && y >= 0 && "invald pixel 'y' index");
     return y * width + x;
 }
 
-void Canvas::write_pixel(int x, int y, Color c) {
+void Canvas::write_pixel(size_t x, size_t y, Color c) {
     pixels[coords_to_index(x, y)] = c;
+}
+
+Color Canvas::pixel_at(size_t x, size_t y) const {
+    return pixels.at(coords_to_index(x, y));
 }
 
 std::string Canvas::to_ppm_header() {

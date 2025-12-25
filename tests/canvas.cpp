@@ -51,7 +51,7 @@ TEST_CASE("Writing pixels to a canvas", "[canvas]") {
     Canvas c(10, 20);
     Color red(1, 0, 0);
     c.write_pixel(2, 3, red);
-    REQUIRE(c.get_pixels().at(c.coords_to_index(2, 3)) == red);
+    REQUIRE(c.pixel_at(2, 3) == red);
 }
 
 TEST_CASE("Constructing the PPM header", "[canvas]") {

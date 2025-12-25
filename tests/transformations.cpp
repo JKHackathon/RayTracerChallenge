@@ -143,3 +143,47 @@ TEST_CASE("Chained transformation equivalent to individual transformations",
     Matrix T = C * B * A;
     REQUIRE(T * p == p4);
 }
+
+TEST_CASE("The transformation matrix for the default orientation",
+          "[scene][transformations]") {
+    Point from(0, 0, 0);
+    Point to(0, 0, -1);
+    Vector up(0, 1, 0);
+    Transform t = Transform::view_transform(from, to, up);
+
+    REQUIRE(t == identity_matrix4);
+}
+
+TEST_CASE("A view transformation matrix looking in positive z direction",
+          "[scene][transformations]") {
+    Point from(0, 0, 0);
+    Point to(0, 0, 1);
+    Vector up(0, 1, 0);
+    Transform t = Transform::view_transform(from, to, up);
+
+    REQUIRE(t == Transform::scaling(-1, 1, -1));
+}
+
+// TODO: page 99, how does this prove it moves the world and not the eye?
+TEST_CASE("The view transformation moves the world",
+          "[scene][transformations]") {
+    Point from(0, 0, 8);
+    Point to(0, 0, 0);
+    Vector up(0, 1, 0);
+    Transform t = Transform::view_transform(from, to, up);
+
+    REQUIRE(t == Transform::translation(0, 0, -8));
+}
+
+TEST_CASE("An arbitrary view transformation", "[scene][transformations]") {
+    Point from(1, 3, 2);
+    Point to(4, -2, 8);
+    Vector up(1, 1, 0);
+    Transform t = Transform::view_transform(from, to, up);
+    Matrix targetTransform(4, 4);
+    targetTransform = {-0.50709, 0.50709, 0.67612,  -2.36643,
+                       0.76772,  0.60609, 0.12122,  -2.82843,
+                       -0.35857, 0.59761, -0.71714, 0.00000,
+                       0.00000,  0.00000, 0.00000,  1.00000};
+    REQUIRE(t == targetTransform);
+}
