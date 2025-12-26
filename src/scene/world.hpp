@@ -2,11 +2,9 @@
 
 #include <unordered_map>
 
-#include "../geometry/sphere.hpp"
+#include "../geometry/intersection.hpp"
+#include "../geometry/shapes.hpp"
 #include "../rendering/lighting.hpp"
-
-struct PrecomputedIntersection;
-struct Ray;
 
 // struct UniquePtrHash {
 //     template <typename T>
@@ -41,11 +39,13 @@ struct World {
 
     static DefaultWorld default_world();
 
+    IntersectionRecord intersect_world(const Ray r) const;
     Color shade_hit(PrecomputedIntersection comps) const;
     Color color_at(Ray r) const;
     bool is_shadowed(Point p) const;
 
-    // TODO: should intersect_world be a member of this? Not ray? cause is_shadowed refers to point...
+    // TODO: should intersect_world be a member of this? Not ray? cause
+    // is_shadowed refers to point...
 };
 
 struct DefaultWorld {

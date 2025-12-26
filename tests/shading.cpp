@@ -1,7 +1,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/geometry/sphere.hpp"
+#include "../src/geometry/shapes.hpp"
 #include "../src/rendering/lighting.hpp"
 
 TEST_CASE("The normal on a sphere at a point on the x axis",

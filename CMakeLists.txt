@@ -13,7 +13,8 @@ add_executable(raytracer
                 src/main.cpp
                 src/canvas.cpp
                 src/math/matrix.cpp
-                src/geometry/ray.cpp
+                src/geometry/intersection.cpp
+                src/geometry/shapes.cpp
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
                 src/math/transformations.cpp
@@ -33,9 +34,11 @@ add_executable(tests
                 tests/world.cpp
                 tests/camera.cpp
                 tests/shadows.cpp
+                tests/shapes.cpp
                 src/canvas.cpp
                 src/math/matrix.cpp
-                src/geometry/ray.cpp
+                src/geometry/intersection.cpp
+                src/geometry/shapes.cpp
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
                 src/math/transformations.cpp

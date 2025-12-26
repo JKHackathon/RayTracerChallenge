@@ -36,7 +36,7 @@ TEST_CASE("Creating a world", "[world][scene]") {
 TEST_CASE("Intersect a world with a ray", "[world][scene]") {
     const auto [w, s1, s2] = World::default_world();
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
-    auto xs = r.intersect_world(&w);
+    auto xs = w.intersect_world(r);
 
     REQUIRE(xs.count == 4);
     REQUIRE(float_equal(xs.intersections[0].t, 4));

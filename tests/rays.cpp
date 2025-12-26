@@ -1,7 +1,9 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include "../src/geometry/intersection.hpp"
 #include "../src/geometry/ray.hpp"
+#include "../src/geometry/shapes.hpp"
 
 TEST_CASE("Creating and querying a ray", "[rays]") {
     Point origin(1, 2, 3);
@@ -23,7 +25,7 @@ TEST_CASE("Computing a point from a distance", "[rays]") {
 TEST_CASE("A ray intersects a sphere at two points", "[rays]") {
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
     auto s = std::make_unique<Sphere>();
-    IntersectionRecord xs = r.intersect(s.get());
+    IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
     REQUIRE(float_equal(xs.intersections[0].t, 4));
@@ -33,7 +35,7 @@ TEST_CASE("A ray intersects a sphere at two points", "[rays]") {
 TEST_CASE("A ray intersects a sphere at a tangent", "[rays]") {
     Ray r(Point(0, 1, -5), Vector(0, 0, 1));
     auto s = std::make_unique<Sphere>();
-    IntersectionRecord xs = r.intersect(s.get());
+    IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
     REQUIRE(float_equal(xs.intersections[0].t, 5));
@@ -43,7 +45,7 @@ TEST_CASE("A ray intersects a sphere at a tangent", "[rays]") {
 TEST_CASE("A ray misses a sphere", "[rays]") {
     Ray r(Point(0, 2, -5), Vector(0, 0, 1));
     auto s = std::make_unique<Sphere>();
-    IntersectionRecord xs = r.intersect(s.get());
+    IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 0);
     REQUIRE(xs.intersections.size() == 0);
@@ -52,7 +54,7 @@ TEST_CASE("A ray misses a sphere", "[rays]") {
 TEST_CASE("A ray originates inside a sphere", "[rays]") {
     Ray r(Point(0, 0, 0), Vector(0, 0, 1));
     auto s = std::make_unique<Sphere>();
-    IntersectionRecord xs = r.intersect(s.get());
+    IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
     REQUIRE(float_equal(xs.intersections[0].t, -1));
@@ -62,7 +64,7 @@ TEST_CASE("A ray originates inside a sphere", "[rays]") {
 TEST_CASE("A sphere is behind a ray", "[rays]") {
     Ray r(Point(0, 0, 5), Vector(0, 0, 1));
     auto s = std::make_unique<Sphere>();
-    IntersectionRecord xs = r.intersect(s.get());
+    IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
     REQUIRE(float_equal(xs.intersections[0].t, -6));
@@ -88,7 +90,7 @@ TEST_CASE("Aggregating intersections", "[rays]") {
 TEST_CASE("Intersect sets the object on the intersection", "[rays]") {
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
     auto s = std::make_unique<Sphere>();
-    IntersectionRecord xs = r.intersect(s.get());
+    IntersectionRecord xs = s.get()->intersect(r);
     REQUIRE(xs.count == 2);
     REQUIRE(xs.intersections[0].object == s.get());
     REQUIRE(xs.intersections[1].object == s.get());
@@ -164,7 +166,7 @@ TEST_CASE("Intersecting a scaled sphere with a ray", "[rays]") {
     auto s_ptr = std::make_unique<Sphere>();
     Sphere* s = s_ptr.get();
     s->transform = Transform::scaling(2, 2, 2);
-    IntersectionRecord xs = r.intersect(s);
+    IntersectionRecord xs = s->intersect(r);
 
     REQUIRE(xs.count == 2);
     REQUIRE(float_equal(xs.intersections[0].t, 3));
@@ -176,7 +178,7 @@ TEST_CASE("Intersecting a translated sphere with a ray", "[rays]") {
     auto s_ptr = std::make_unique<Sphere>();
     Sphere* s = s_ptr.get();
     s->transform = Transform::translation(5, 0, 0);
-    IntersectionRecord xs = r.intersect(s);
+    IntersectionRecord xs = s->intersect(r);
 
     REQUIRE(xs.count == 0);
 }

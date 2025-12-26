@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../canvas.hpp"
-#include "../geometry/ray.hpp"
+#include "../scene/world.hpp"
 
 struct Camera {
     size_t hsize;
