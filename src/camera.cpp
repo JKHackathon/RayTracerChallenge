@@ -1,5 +1,7 @@
 #include "camera.hpp"
 
+#include <iomanip>
+
 Camera::Camera(size_t hsize, size_t vsize, float fov)
     : hsize(hsize), vsize(vsize), fov(fov), transform(identity_matrix4) {
     float half_view = tan(fov / 2);
@@ -37,12 +39,32 @@ Ray Camera::ray_for_pixel(size_t px, size_t py) const {
 Canvas Camera::render(const World* w) const {
     Canvas image(hsize, vsize);
 
+    constexpr int bar_width = 50;
+
     for (size_t y = 0; y < vsize; y++) {
         for (size_t x = 0; x < hsize; x++) {
             Ray r = ray_for_pixel(x, y);
             Color c = w->color_at(r);
             image.write_pixel(x, y, c);
         }
+        // Progress bar update (per row)
+        float progress = static_cast<float>(y + 1) / vsize;
+        int pos = static_cast<int>(bar_width * progress);
+
+        std::cout << "\r[";
+        for (int i = 0; i < bar_width; ++i) {
+            if (i < pos)
+                std::cout << "=";
+            else if (i == pos)
+                std::cout << ">";
+            else
+                std::cout << " ";
+        }
+        std::cout << "] " << std::setw(3) << static_cast<int>(progress * 100)
+                  << "%";
+
+        std::cout.flush();
     }
+    std::cout << "\n";
     return image;
 }
