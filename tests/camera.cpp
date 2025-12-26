@@ -1,13 +1,9 @@
-#include "../src/camera.hpp"
+#include "../src/rendering/camera.hpp"
 
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <cstdint>
 #include <iostream>
-
-#include "../src/canvas.hpp"
-#include "../src/matrix.hpp"
-#include "../src/ray.hpp"
 
 TEST_CASE("Constructing a camera", "[scene][camera]") {
     size_t hsize = 160;

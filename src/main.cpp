@@ -3,13 +3,9 @@
 #include <iomanip>
 #include <iostream>
 
-#include "camera.hpp"
-#include "canvas.hpp"
-#include "lighting.hpp"
-#include "lights.hpp"
-#include "ray.hpp"
-#include "sphere.hpp"
-#include "transformations.hpp"
+#include "geometry/ray.hpp"
+#include "rendering/camera.hpp"
+#include "rendering/lighting.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc > 1 && (std::strcmp(argv[1], "-h") == 0 ||

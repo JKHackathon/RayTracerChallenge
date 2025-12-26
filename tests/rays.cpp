@@ -1,9 +1,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/ray.hpp"
-#include "../src/transformations.hpp"
-#include "../src/tuples.hpp"
+#include "../src/geometry/ray.hpp"
 
 TEST_CASE("Creating and querying a ray", "[rays]") {
     Point origin(1, 2, 3);

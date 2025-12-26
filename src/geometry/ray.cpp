@@ -63,5 +63,8 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
         comps.normal = -comps.normal;
     }
 
+    float eps = EPSILON * fmax(1, comps.t * 2);
+    comps.over_point = comps.point + comps.normal * eps;
+
     return comps;
 }

@@ -4,10 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include "../scene/world.hpp"
 #include "sphere.hpp"
-#include "transformations.hpp"
-#include "tuples.hpp"
-#include "world.hpp"
 
 struct Intersection {
     float t;
@@ -88,6 +86,7 @@ struct PrecomputedIntersection {
     Vector eye;
     Vector normal;
     bool inside;
+    Point over_point;
 
     PrecomputedIntersection() {}
 

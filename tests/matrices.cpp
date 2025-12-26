@@ -1,9 +1,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/matrix.hpp"
-#include "../src/tuples.hpp"
-#include "../src/util.hpp"
+#include "../src/math/matrix.hpp"
 
 TEST_CASE("Constructing and inspecting a 4x4 matrix", "[matrices]") {
     Matrix m(4, 4);

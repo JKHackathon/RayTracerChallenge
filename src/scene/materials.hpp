@@ -1,6 +1,6 @@
 #pragma once
 
-#include "color.hpp"
+#include "../math/color.hpp"
 
 struct Material {
     Color color;

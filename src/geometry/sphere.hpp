@@ -1,9 +1,9 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "materials.hpp"
-#include "transformations.hpp"
-#include "tuples.hpp"
+#include "../math/transformations.hpp"
+#include "../math/tuples.hpp"
+#include "../scene/materials.hpp"
 
 struct Sphere {
     Point origin;

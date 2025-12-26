@@ -1,6 +1,6 @@
 #include "world.hpp"
 
-#include "ray.hpp"
+#include "../geometry/ray.hpp"
 
 DefaultWorld World::default_world() {
     DefaultWorld result;
@@ -29,9 +29,10 @@ DefaultWorld World::default_world() {
 }
 
 Color World::shade_hit(PrecomputedIntersection comps) const {
+    bool shadowed = is_shadowed(comps.over_point);
     // TODO: change to allow for multiple lights
     return Shading::phong_lighting(comps.object->material, light.get(),
-                                   comps.point, comps.eye, comps.normal);
+                                   comps.point, comps.eye, comps.normal, shadowed);
 }
 
 Color World::color_at(Ray r) const {
@@ -44,3 +45,15 @@ Color World::color_at(Ray r) const {
     auto comps = PrecomputedIntersection::prepare_computations(hit.value(), r);
     return shade_hit(comps);
 }
+
+bool World::is_shadowed(Point p) const {
+    Vector p_to_light = light.get()->pos - p;
+    float distance = p_to_light.magnitude();
+    Vector dir_to_light = p_to_light.normalized();
+
+    Ray r(p, dir_to_light);
+    auto intersections = r.intersect_world(this);
+    auto hit = intersections.hit();
+    return hit.has_value() && hit.value().t < distance;
+}
+

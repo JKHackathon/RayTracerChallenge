@@ -2,9 +2,8 @@
 
 #include <unordered_map>
 
-#include "lighting.hpp"
-#include "lights.hpp"
-#include "sphere.hpp"
+#include "../geometry/sphere.hpp"
+#include "../rendering/lighting.hpp"
 
 struct PrecomputedIntersection;
 struct Ray;
@@ -44,6 +43,9 @@ struct World {
 
     Color shade_hit(PrecomputedIntersection comps) const;
     Color color_at(Ray r) const;
+    bool is_shadowed(Point p) const;
+
+    // TODO: should intersect_world be a member of this? Not ray? cause is_shadowed refers to point...
 };
 
 struct DefaultWorld {

@@ -1,8 +1,7 @@
-#ifndef LIGHTS_HPP
-#define LIGHTS_HPP
+#pragma once
 
-#include "color.hpp"
-#include "tuples.hpp"
+#include "../math/color.hpp"
+#include "../math/tuples.hpp"
 
 struct PointLight {
     Point pos;
@@ -11,5 +10,3 @@ struct PointLight {
     PointLight(Point position, Color intensity)
         : pos(position), intensity(intensity) {}
 };
-
-#endif

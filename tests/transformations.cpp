@@ -1,10 +1,7 @@
-#include "../src/transformations.hpp"
+#include "../src/math/transformations.hpp"
 
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
-
-#include "../src/tuples.hpp"
-#include "../src/util.hpp"
 
 TEST_CASE("Multiplying by a translation matrix", "[transformations]") {
     Transform transform = Transform::translation(5, -3, 2);

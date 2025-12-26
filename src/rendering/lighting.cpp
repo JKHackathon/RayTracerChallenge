@@ -2,11 +2,16 @@
 
 // TODO: iterate over all light sources
 Color Shading::phong_lighting(Material m, const PointLight* light, Point point,
-                              Vector eye, Vector normal) {
+                              Vector eye, Vector normal,
+                              bool in_shadow) {
     Color effective_color = m.color * light->intensity;
     Vector dir_to_light = Vector(light->pos - point).normalized();
 
     auto ambient = effective_color * m.ambient;
+
+    if (in_shadow) {
+        return ambient;
+    }
 
     // light_dot_normal represents the cosine of the angle between the
     // light vector and the normal vector. A negative number means the

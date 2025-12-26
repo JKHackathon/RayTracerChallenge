@@ -5,8 +5,7 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../src/color.hpp"
-#include "../src/tuples.hpp"
+#include "../src/math/tuples.hpp"
 
 TEST_CASE("Colors are (red, green, blue) tuples", "[canvas]") {
     Color c(-0.5, 0.4, 1.7);

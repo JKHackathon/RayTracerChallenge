@@ -1,14 +1,8 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/color.hpp"
-#include "../src/lighting.hpp"
-#include "../src/lights.hpp"
-#include "../src/materials.hpp"
-#include "../src/matrix.hpp"
-#include "../src/sphere.hpp"
-#include "../src/tuples.hpp"
-#include "../src/util.hpp"
+#include "../src/geometry/sphere.hpp"
+#include "../src/rendering/lighting.hpp"
 
 TEST_CASE("The normal on a sphere at a point on the x axis",
           "[sphere][shading]") {
@@ -162,5 +156,14 @@ TEST_CASE_METHOD(MaterialFixture, "Lighting with the light behind the surface",
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, 10), Color(1, 1, 1));
     auto result = Shading::phong_lighting(m, &light, pos, eye, normal);
+    REQUIRE(result == Color(.1, .1, .1));
+}
+
+TEST_CASE_METHOD(MaterialFixture, "Lighting with the surface in shadow",
+                 "[materials][shading][shadows]") {
+    Vector eye(0, 0, -1);
+    Vector normal(0, 0, -1);
+    PointLight light(Point(0, 0, -10), Color(1, 1, 1));
+    auto result = Shading::phong_lighting(m, &light, pos, eye, normal, true);
     REQUIRE(result == Color(.1, .1, .1));
 }

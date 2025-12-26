@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "color.hpp"
+#include "math/color.hpp"
 
 struct Canvas {
    private:

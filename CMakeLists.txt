@@ -12,12 +12,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(raytracer
                 src/main.cpp
                 src/canvas.cpp
-                src/matrix.cpp
-                src/ray.cpp
-                src/lighting.cpp
-                src/world.cpp
-                src/transformations.cpp
-                src/camera.cpp
+                src/math/matrix.cpp
+                src/geometry/ray.cpp
+                src/rendering/lighting.cpp
+                src/scene/world.cpp
+                src/math/transformations.cpp
+                src/rendering/camera.cpp
 )
 
 find_package(Catch2 3 REQUIRED CONFIG)
@@ -32,13 +32,15 @@ add_executable(tests
                 tests/shading.cpp
                 tests/world.cpp
                 tests/camera.cpp
+                tests/shadows.cpp
                 src/canvas.cpp
-                src/matrix.cpp
-                src/ray.cpp
-                src/lighting.cpp
-                src/world.cpp
-                src/transformations.cpp
-                src/camera.cpp)
+                src/math/matrix.cpp
+                src/geometry/ray.cpp
+                src/rendering/lighting.cpp
+                src/scene/world.cpp
+                src/math/transformations.cpp
+                src/rendering/camera.cpp
+)
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
