@@ -18,12 +18,16 @@ struct Shape {
 
     // TODO: fully understand how (pure) virtual/override works!
     virtual Vector normal_at(const Point p) const = 0;
-    virtual IntersectionRecord intersect(const Ray r) const = 0;
+    IntersectionRecord intersect(const Ray r) {
+        Ray obj_space_ray = r.transform(transform.inverse());
+        return this->local_intersect(obj_space_ray);
+    }
+    virtual IntersectionRecord local_intersect(const Ray r) const = 0;
 };
 
 struct TestShape : public Shape {
-    virtual Vector normal_at(const Point p) const { return Vector(0, 0, 0); }
-    virtual IntersectionRecord intersect(const Ray r) const {
+    Vector normal_at(const Point p) const override { return Vector(2, 0, 0); }
+    IntersectionRecord local_intersect(const Ray r) const override {
         return IntersectionRecord();
     }
 };
@@ -49,5 +53,5 @@ struct Sphere : public Shape {
     // TO UNDERSTAND: why do I want my intersect to check things behind the ray?
     // For reflections!!! + chapter 16
     // TODO: look into math of it
-    IntersectionRecord intersect(const Ray r) const override;
+    IntersectionRecord local_intersect(const Ray r) const override;
 };

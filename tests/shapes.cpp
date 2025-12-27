@@ -10,12 +10,14 @@ TEST_CASE("The default transformation", "[shapes]") {
 
 TEST_CASE("Assigning a transformation", "[shapes]") {
     TestShape s;
+    REQUIRE(s.normal_at(Point(2, 3, 4)) == Vector(2, 0, 0));
     s.transform = Transform::translation(2, 3, 4);
     REQUIRE(s.transform == Transform::translation(2, 3, 4));
 }
 
 TEST_CASE("The default material", "[shapes]") {
-    TestShape s;;
+    TestShape s;
+    ;
     REQUIRE(s.material == Material());
 }
 
