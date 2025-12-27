@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "../math/transformations.hpp"
 #include "../math/tuples.hpp"
 #include "../scene/materials.hpp"
@@ -9,30 +11,48 @@
 // struct IntersectionRecord;
 
 struct Shape {
+   public:
     Transform transform;
     Material material;
 
     Shape() {}
     Shape(Transform transform, Material material)
         : transform(transform), material(material) {}
+    virtual ~Shape() = default; // Required for children's destructor to be called
 
-    // TODO: fully understand how (pure) virtual/override works!
-    virtual Vector normal_at(const Point p) const = 0;
+    Vector normal_at(const Point p) const {
+        Vector n_o = this->local_normal_at(transform.inverse() * p);
+        auto n_w = transform.inverse().transpose() * n_o;
+        n_w.w = 0;
+        return Vector(n_w).normalized();
+    }
+
     IntersectionRecord intersect(const Ray r) {
         Ray obj_space_ray = r.transform(transform.inverse());
         return this->local_intersect(obj_space_ray);
     }
-    virtual IntersectionRecord local_intersect(const Ray r) const = 0;
+
+   private:
+    virtual IntersectionRecord local_intersect(const Ray local_r) const = 0;
+    virtual Vector local_normal_at(const Point local_p) const = 0;
 };
 
 struct TestShape : public Shape {
-    Vector normal_at(const Point p) const override { return Vector(2, 0, 0); }
-    IntersectionRecord local_intersect(const Ray r) const override {
+   public:
+    mutable std::optional<Ray> saved_ray;
+
+   private:
+    Vector local_normal_at(const Point p) const override {
+        return Vector(p.x, p.y, p.z);
+    }
+    IntersectionRecord local_intersect(const Ray local_r) const override {
+        saved_ray = local_r;
         return IntersectionRecord();
     }
 };
 
 struct Sphere : public Shape {
+   public:
     Point origin;
     float radius;
     // Transform transform;
@@ -42,16 +62,30 @@ struct Sphere : public Shape {
     Sphere(Transform transform, Material material)
         : Shape(transform, material), origin(Point(0, 0, 0)), radius(1) {}
 
-    Vector normal_at(Point p) const override {
-        Vector n_o = transform.inverse() * p - origin;
-        auto n_w = transform.inverse().transpose() * n_o;
-        n_w.w = 0;
-        return Vector(n_w).normalized();
+   private:
+    Vector local_normal_at(const Point local_p) const override {
+        return local_p - origin;
     }
 
     // TODO: abstract to any objects in scene
     // TO UNDERSTAND: why do I want my intersect to check things behind the ray?
     // For reflections!!! + chapter 16
     // TODO: look into math of it
-    IntersectionRecord local_intersect(const Ray r) const override;
+    IntersectionRecord local_intersect(const Ray local_r) const override;
+};
+
+struct Plane : public Shape {
+   private:
+    Vector local_normal_at(const Point local_p) const override {
+        return Vector(0, 1, 0);
+    }
+
+    IntersectionRecord local_intersect(const Ray local_r) const override {
+        if (abs(local_r.dir.y) < EPSILON) {
+            return IntersectionRecord();
+        }
+
+        float t = -local_r.origin.y / local_r.dir.y;
+        return Intersection(t, this);
+    }
 };

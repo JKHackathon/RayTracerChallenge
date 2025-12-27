@@ -28,29 +28,26 @@ int main(int argc, char* argv[]) {
     // Canvas canvas(width, height);
 
     // Floor
-    auto floor_u = std::make_unique<Sphere>();
-    Sphere* floor = floor_u.get();
-    floor->transform = Transform::scaling(10, 0.01, 10);
-    // floor->material = Material();
-    floor->material.color = Color(1, .9, .9);
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
     floor->material.specular = 0;
     // floor->material.diffuse = 1;
     // floor->material.ambient = 1;
 
     // Walls
-    auto left_wall_u = std::make_unique<Sphere>();
-    auto left_wall = left_wall_u.get();
-    left_wall->transform =
-        Transform::translation(0, 0, 5) * Transform::rotation_y(-M_PI / 4) *
-        Transform::rotation_x(M_PI / 2) * Transform::scaling(10, .01, 10);
-    left_wall->material = floor->material;
+    // auto left_wall_u = std::make_unique<Sphere>();
+    // auto left_wall = left_wall_u.get();
+    // left_wall->transform =
+    //     Transform::translation(0, 0, 5) * Transform::rotation_y(-M_PI / 4) *
+    //     Transform::rotation_x(M_PI / 2) * Transform::scaling(10, .01, 10);
+    // left_wall->material = floor->material;
 
-    auto right_wall_u = std::make_unique<Sphere>();
-    auto right_wall = right_wall_u.get();
-    right_wall->transform =
-        Transform::translation(0, 0, 5) * Transform::rotation_y(M_PI / 4) *
-        Transform::rotation_x(M_PI / 2) * Transform::scaling(10, .01, 10);
-    right_wall->material = floor->material;
+    // auto right_wall_u = std::make_unique<Sphere>();
+    // auto right_wall = right_wall_u.get();
+    // right_wall->transform =
+    //     Transform::translation(0, 0, 5) * Transform::rotation_y(M_PI / 4) *
+    //     Transform::rotation_x(M_PI / 2) * Transform::scaling(10, .01, 10);
+    // right_wall->material = floor->material;
 
     // Spheres
     auto middle_s_u = std::make_unique<Sphere>();
@@ -83,8 +80,8 @@ int main(int argc, char* argv[]) {
     // World
     World w;
     w.objects.emplace(floor, std::move(floor_u));
-    w.objects.emplace(left_wall, std::move(left_wall_u));
-    w.objects.emplace(right_wall, std::move(right_wall_u));
+    // w.objects.emplace(left_wall, std::move(left_wall_u));
+    // w.objects.emplace(right_wall, std::move(right_wall_u));
     w.objects.emplace(middle_s, std::move(middle_s_u));
     w.objects.emplace(right_s, std::move(right_s_u));
     w.objects.emplace(left_s, std::move(left_s_u));

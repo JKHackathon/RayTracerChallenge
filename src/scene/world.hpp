@@ -29,7 +29,7 @@ struct World {
     // TODO: does order matter? Might at least for tests
     // TODO: is this the best way of storing? quick lookup, but is this what
     // should own objects/lights
-    std::unordered_map<Sphere*, std::unique_ptr<Sphere>> objects;
+    std::unordered_map<Shape*, std::unique_ptr<Shape>> objects;
 
     // TODO: allow for multiple lights
     // std::unordered_map<PointLight*, std::unique_ptr<PointLight>> lights;

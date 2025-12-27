@@ -3,13 +3,13 @@
 #include "ray.hpp"
 // #include "shapes.hpp"
 
-struct Sphere;
+struct Shape;
 
 struct Intersection {
     float t;
-    const Sphere* object;  // const
+    const Shape* object;  // const
 
-    Intersection(float t, const Sphere* object) : t(t), object(object) {}
+    Intersection(float t, const Shape* object) : t(t), object(object) {}
 
     bool operator==(const Intersection& other) const {
         return t == other.t && object == other.object;
@@ -47,7 +47,7 @@ struct IntersectionRecord {
 
 struct PrecomputedIntersection {
     float t;
-    const Sphere* object;
+    const Shape* object;
     Point point;
     Vector eye;
     Vector normal;

@@ -2,12 +2,12 @@
 
 // #include "intersection.hpp"
 
-IntersectionRecord Sphere::local_intersect(const Ray r) const {
+IntersectionRecord Sphere::local_intersect(const Ray local_r) const {
     // Ray obj_space_ray = r.transform(transform.inverse());
 
-    Vector sphere_to_ray = r.origin - origin;
-    float a = r.dir.dot(r.dir);
-    float b = 2 * r.dir.dot(sphere_to_ray);
+    Vector sphere_to_ray = local_r.origin - origin;
+    float a = local_r.dir.dot(local_r.dir);
+    float b = 2 * local_r.dir.dot(sphere_to_ray);
     float c = sphere_to_ray.dot(sphere_to_ray) - 1;
     float discriminant = pow(b, 2) - 4 * a * c;
 
