@@ -40,9 +40,9 @@ IntersectionRecord World::intersect_world(const Ray r) const {
 Color World::shade_hit(PrecomputedIntersection comps) const {
     bool shadowed = is_shadowed(comps.over_point);
     // TODO: change to allow for multiple lights
-    return Shading::phong_lighting(comps.object->material, light.get(),
-                                   comps.point, comps.eye, comps.normal,
-                                   shadowed);
+    return Shading::phong_lighting(comps.object->material, comps.object,
+                                   light.get(), comps.point, comps.eye,
+                                   comps.normal, shadowed);
 }
 
 Color World::color_at(Ray r) const {

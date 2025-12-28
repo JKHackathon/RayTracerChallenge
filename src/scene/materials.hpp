@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../math/color.hpp"
+#include <optional>
+
+#include "patterns.hpp"
 
 struct Material {
     Color color;
@@ -8,14 +10,18 @@ struct Material {
     float diffuse;
     float specular;
     float shininess;
+    Pattern* pattern;
 
+    // TODO: why are these my default values again?
     Material(Color color = Color(1, 1, 1), float ambient = .1,
-             float diffuse = .9, float specular = .9, float shininess = 200)
+             float diffuse = .9, float specular = .9, float shininess = 200,
+             Pattern* pattern = nullptr)
         : color(color),
           ambient(ambient),
           diffuse(diffuse),
           specular(specular),
-          shininess(shininess) {}
+          shininess(shininess),
+          pattern(pattern) {}
 
     bool operator==(const Material& other) const {
         return color == other.color && float_equal(ambient, other.ambient) &&

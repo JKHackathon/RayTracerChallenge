@@ -4,6 +4,6 @@
 #include "../scene/materials.hpp"
 
 namespace Shading {
-Color phong_lighting(Material m, const PointLight* light, Point point,
+Color phong_lighting(Material m, const Shape* object, const PointLight* light, Point point,
                      Vector eye, Vector normal, bool in_shadow = false);
 }

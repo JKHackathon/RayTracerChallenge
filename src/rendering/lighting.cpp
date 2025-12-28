@@ -1,10 +1,15 @@
 #include "lighting.hpp"
 
 // TODO: iterate over all light sources
-Color Shading::phong_lighting(Material m, const PointLight* light, Point point,
-                              Vector eye, Vector normal,
-                              bool in_shadow) {
+Color Shading::phong_lighting(Material m, const Shape* object,
+                              const PointLight* light, Point point, Vector eye,
+                              Vector normal, bool in_shadow) {
     Color effective_color = m.color * light->intensity;
+    if (m.pattern) {
+        effective_color =
+            m.pattern->pattern_at_shape(object, point) * light->intensity;
+    }
+
     Vector dir_to_light = Vector(light->pos - point).normalized();
 
     auto ambient = effective_color * m.ambient;

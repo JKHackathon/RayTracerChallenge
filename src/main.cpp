@@ -31,16 +31,20 @@ int main(int argc, char* argv[]) {
     auto floor_u = std::make_unique<Plane>();
     Plane* floor = floor_u.get();
     floor->material.specular = 0;
+    CheckerPattern pattern(Color(1, 1, 1), Color(0, 0, 0));
+    floor->material.pattern = &pattern;
     // floor->material.diffuse = 1;
     // floor->material.ambient = 1;
 
     // Walls
-    // auto left_wall_u = std::make_unique<Sphere>();
-    // auto left_wall = left_wall_u.get();
-    // left_wall->transform =
-    //     Transform::translation(0, 0, 5) * Transform::rotation_y(-M_PI / 4) *
-    //     Transform::rotation_x(M_PI / 2) * Transform::scaling(10, .01, 10);
-    // left_wall->material = floor->material;
+    auto back_wall_u = std::make_unique<Plane>();
+    auto back_wall = back_wall_u.get();
+    back_wall->transform =
+        Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
+    StripePattern back_wall_pattern(Color(.8, .8, .8), Color(0, 0, 0));
+    back_wall_pattern.transform =
+        Transform::scaling(.3, .3, .3) * Transform::rotation_z(M_PI / 4);
+    back_wall->material.pattern = &back_wall_pattern;
 
     // auto right_wall_u = std::make_unique<Sphere>();
     // auto right_wall = right_wall_u.get();
@@ -54,6 +58,12 @@ int main(int argc, char* argv[]) {
     Sphere* middle_s = middle_s_u.get();
     middle_s->transform = Transform::translation(-.5, 1, .5);
     middle_s->material.color = Color(1, 0.2, 1);
+    RingPattern sphere_pattern(Color(1, 0.2, 1), Color(1, 0, 0));
+    sphere_pattern.transform =
+        Transform::scaling(.1, .1, .1) * Transform::rotation_z(-M_PI / 3) *
+        Transform::rotation_x(M_PI / 2.5) * Transform::translation(0, -3.5, 0);
+    middle_s->material.pattern = &sphere_pattern;
+
     middle_s->material.diffuse = .7;
     middle_s->material.specular = .3;
 
@@ -61,7 +71,10 @@ int main(int argc, char* argv[]) {
     Sphere* right_s = right_s_u.get();
     right_s->transform =
         Transform::translation(1.5, .5, -.5) * Transform::scaling(.5, .5, .5);
-    right_s->material.color = Color(.5, 1, .1);
+    GradientPattern r_sphere_pattern(Color(.5, 1, .1), Color(1, 0, 0));
+    r_sphere_pattern.transform =
+        Transform::scaling(2, 2, 2) * Transform::translation(.5, 0, 0);
+    right_s->material.pattern = &r_sphere_pattern;
     right_s->material.diffuse = .7;
     right_s->material.specular = .3;
 
@@ -80,7 +93,7 @@ int main(int argc, char* argv[]) {
     // World
     World w;
     w.objects.emplace(floor, std::move(floor_u));
-    // w.objects.emplace(left_wall, std::move(left_wall_u));
+    w.objects.emplace(back_wall, std::move(back_wall_u));
     // w.objects.emplace(right_wall, std::move(right_wall_u));
     w.objects.emplace(middle_s, std::move(middle_s_u));
     w.objects.emplace(right_s, std::move(right_s_u));
