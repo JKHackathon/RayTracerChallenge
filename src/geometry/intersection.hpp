@@ -53,6 +53,7 @@ struct PrecomputedIntersection {
     Vector normal;
     bool inside;
     Point over_point;
+    Vector reflect_dir;
 
     PrecomputedIntersection() {}
 

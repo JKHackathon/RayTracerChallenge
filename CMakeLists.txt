@@ -37,6 +37,7 @@ add_executable(tests
                 tests/shadows.cpp
                 tests/shapes.cpp
                 tests/patterns.cpp
+                tests/reflection.cpp
                 src/canvas.cpp
                 src/math/matrix.cpp
                 src/geometry/intersection.cpp

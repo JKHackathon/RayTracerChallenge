@@ -33,19 +33,21 @@ IntersectionRecord World::intersect_world(const Ray r) const {
     }
 
     std::sort(xs.intersections.begin(), xs.intersections.end(),
-              [](Intersection a, Intersection b) { return a.t < b.t; });
+        [](Intersection a, Intersection b) { return a.t < b.t; });
     return xs;
 }
 
-Color World::shade_hit(PrecomputedIntersection comps) const {
+Color World::shade_hit(PrecomputedIntersection comps, int recursion_depth) const {
     bool shadowed = is_shadowed(comps.over_point);
     // TODO: change to allow for multiple lights
-    return Shading::phong_lighting(comps.object->material, comps.object,
-                                   light.get(), comps.point, comps.eye,
-                                   comps.normal, shadowed);
+    Color surface = Shading::phong_lighting(comps.object->material, comps.object,
+        light.get(), comps.point, comps.eye,
+        comps.normal, shadowed);
+    Color reflected = reflected_color(comps, ++recursion_depth);
+    return surface + reflected;
 }
 
-Color World::color_at(Ray r) const {
+Color World::color_at(Ray r, int recursion_depth) const {
     auto xs = this->intersect_world(r);
     auto hit = xs.hit();
     if (!hit.has_value()) {
@@ -53,7 +55,7 @@ Color World::color_at(Ray r) const {
     }
 
     auto comps = PrecomputedIntersection::prepare_computations(hit.value(), r);
-    return shade_hit(comps);
+    return shade_hit(comps, recursion_depth);
 }
 
 bool World::is_shadowed(Point p) const {
@@ -65,4 +67,13 @@ bool World::is_shadowed(Point p) const {
     auto intersections = this->intersect_world(r);
     auto hit = intersections.hit();
     return hit.has_value() && hit.value().t < distance;
+}
+
+Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth) const {
+    if (recursion_depth >= REFLECTION_DEPTH || comps.object->material.reflective == 0) {
+        return Color(0, 0, 0);
+    }
+
+    Ray reflected_ray(comps.over_point, comps.reflect_dir);
+    return color_at(reflected_ray, recursion_depth) * comps.object->material.reflective;
 }

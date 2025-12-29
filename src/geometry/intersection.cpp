@@ -10,7 +10,7 @@ std::optional<Intersection> IntersectionRecord::hit() const {
     for (const auto& intersection : intersections) {
         if (intersection.t >= 0 &&
             intersection.t <
-                hit_val) {  // TODO: just non-negative or only positive
+            hit_val) {  // TODO: just non-negative or only positive
             hit = intersection;
             hit_val = intersection.t;
         }
@@ -35,7 +35,9 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
         comps.normal = -comps.normal;
     }
 
-    float eps = EPSILON * fmax(1, comps.t * 2);
+    comps.reflect_dir = r.dir.reflect(comps.normal).normalized();
+
+    float eps = .001;//EPSILON * fmax(1, comps.t * 2);
     comps.over_point = comps.point + comps.normal * eps;
 
     return comps;
