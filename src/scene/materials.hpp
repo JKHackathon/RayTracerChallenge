@@ -12,18 +12,22 @@ struct Material {
     float shininess;
     Pattern* pattern;
     float reflective;
+    float transparency;
+    float refractive_index;
 
     // TODO: why are these my default values again?
     Material(Color color = Color(1, 1, 1), float ambient = .1,
         float diffuse = .9, float specular = .9, float shininess = 200,
-        Pattern* pattern = nullptr, float reflective = 0.0)
+        Pattern* pattern = nullptr, float reflective = 0.0, float transparency = 0.0, float refractive_index = 1)
         : color(color),
         ambient(ambient),
         diffuse(diffuse),
         specular(specular),
         shininess(shininess),
         pattern(pattern),
-        reflective(reflective) {
+        reflective(reflective),
+        transparency(transparency),
+        refractive_index(refractive_index) {
     }
 
     bool operator==(const Material& other) const {

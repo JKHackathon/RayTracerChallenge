@@ -11,13 +11,14 @@
 // struct IntersectionRecord;
 
 struct Shape {
-   public:
+public:
     Transform transform;
     Material material;
 
     Shape() {}
     Shape(Transform transform, Material material)
-        : transform(transform), material(material) {}
+        : transform(transform), material(material) {
+    }
     virtual ~Shape() = default; // Required for children's destructor to be called
 
     Vector normal_at(const Point p) const {
@@ -32,16 +33,16 @@ struct Shape {
         return this->local_intersect(obj_space_ray);
     }
 
-   private:
+private:
     virtual IntersectionRecord local_intersect(const Ray local_r) const = 0;
     virtual Vector local_normal_at(const Point local_p) const = 0;
 };
 
 struct TestShape : public Shape {
-   public:
+public:
     mutable std::optional<Ray> saved_ray;
 
-   private:
+private:
     Vector local_normal_at(const Point p) const override {
         return Vector(p.x, p.y, p.z);
     }
@@ -52,7 +53,7 @@ struct TestShape : public Shape {
 };
 
 struct Sphere : public Shape {
-   public:
+public:
     Point origin;
     float radius;
     // Transform transform;
@@ -60,9 +61,10 @@ struct Sphere : public Shape {
 
     Sphere() : origin(Point(0, 0, 0)), radius(1) {}
     Sphere(Transform transform, Material material)
-        : Shape(transform, material), origin(Point(0, 0, 0)), radius(1) {}
+        : Shape(transform, material), origin(Point(0, 0, 0)), radius(1) {
+    }
 
-   private:
+private:
     Vector local_normal_at(const Point local_p) const override {
         return local_p - origin;
     }
@@ -74,8 +76,15 @@ struct Sphere : public Shape {
     IntersectionRecord local_intersect(const Ray local_r) const override;
 };
 
+struct GlassSphere : public Sphere {
+    GlassSphere() {
+        material.transparency = 1;
+        material.refractive_index = 1.5;
+    }
+};
+
 struct Plane : public Shape {
-   private:
+private:
     Vector local_normal_at(const Point local_p) const override {
         return Vector(0, 1, 0);
     }

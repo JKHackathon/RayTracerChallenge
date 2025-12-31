@@ -49,6 +49,7 @@ struct World {
     Color color_at(Ray r, int recursion_depth = 0) const;
     bool is_shadowed(Point p) const;
     Color reflected_color(PrecomputedIntersection comps, int recursion_depth = 0) const;
+    Color refracted_color(PrecomputedIntersection comps, int recursion_depth = 0) const;
 
     // TODO: should intersect_world be a member of this? Not ray? cause
     // is_shadowed refers to point...

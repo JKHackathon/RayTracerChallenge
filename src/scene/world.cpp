@@ -43,8 +43,9 @@ Color World::shade_hit(PrecomputedIntersection comps, int recursion_depth) const
     Color surface = Shading::phong_lighting(comps.object->material, comps.object,
         light.get(), comps.point, comps.eye,
         comps.normal, shadowed);
-    Color reflected = reflected_color(comps, ++recursion_depth);
-    return surface + reflected;
+    Color reflected = reflected_color(comps, recursion_depth);
+    Color refracted = refracted_color(comps, recursion_depth);
+    return surface + reflected + refracted;
 }
 
 Color World::color_at(Ray r, int recursion_depth) const {
@@ -55,6 +56,9 @@ Color World::color_at(Ray r, int recursion_depth) const {
     }
 
     auto comps = PrecomputedIntersection::prepare_computations(hit.value(), r);
+    // ---- DEBUGGING: visualize which object was hit ----
+    // if (hit->object->material.reflective == 1) return Color(1, 0, 0); // red = self-hit
+    // else if (hit->object->material.reflective != 1) return Color(0, 1, 0);
     return shade_hit(comps, recursion_depth);
 }
 
@@ -70,10 +74,33 @@ bool World::is_shadowed(Point p) const {
 }
 
 Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH || comps.object->material.reflective == 0) {
+    if (recursion_depth >= REFLECTION_DEPTH || float_equal(comps.object->material.reflective, 0)) {
         return Color(0, 0, 0);
     }
 
     Ray reflected_ray(comps.over_point, comps.reflect_dir);
-    return color_at(reflected_ray, recursion_depth) * comps.object->material.reflective;
+    return color_at(reflected_ray, recursion_depth + 1) * comps.object->material.reflective;
+}
+
+Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth) const {
+    if (recursion_depth >= REFLECTION_DEPTH || float_equal(comps.object->material.transparency, 0)) {
+        return Color(0, 0, 0);
+    }
+
+    // Snell's Law
+    float n_ratio = comps.n1 / comps.n2;
+    float cos_i = comps.eye.dot(comps.normal);
+    float sin2_t = pow(n_ratio, 2) * (1 - pow(cos_i, 2));
+
+    if (sin2_t > 1) { // Total internal reflection
+        assert(false);
+        std::cout << "Total Internal reflection!!!\n";
+        return Color(0, 0, 0);
+    }
+
+    float cos_t = sqrt(1 - sin2_t);
+    Vector refracted_dir = comps.normal * (n_ratio * cos_i - cos_t) - comps.eye * n_ratio;
+    Ray refracted_ray(comps.under_point, refracted_dir.normalized());
+
+    return color_at(refracted_ray, recursion_depth + 1) * comps.object->material.transparency;
 }

@@ -38,6 +38,7 @@ add_executable(tests
                 tests/shapes.cpp
                 tests/patterns.cpp
                 tests/reflection.cpp
+                tests/refraction.cpp
                 src/canvas.cpp
                 src/math/matrix.cpp
                 src/geometry/intersection.cpp

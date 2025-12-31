@@ -26,8 +26,8 @@ struct IntersectionRecord {
     template <typename... IntersectionPack>
     IntersectionRecord(IntersectionPack... intersections)
         requires(std::same_as<IntersectionPack, Intersection> && ...)
-        : count(sizeof...(IntersectionPack)) {
-        this->intersections = {intersections...};
+    : count(sizeof...(IntersectionPack)) {
+        this->intersections = { intersections... };
         // std::vector<Intersection> i = {
         //     (std::forward<Intersection>(intersections),
         //     ...)};  // prob need to forward this cause of Sphere
@@ -52,10 +52,15 @@ struct PrecomputedIntersection {
     Vector eye;
     Vector normal;
     bool inside;
-    Point over_point;
+    Point over_point; // origin of shadows above surface
     Vector reflect_dir;
+
+    // refraction
+    float n1;
+    float n2;
+    Point under_point; // origin of refracted rays under surface
 
     PrecomputedIntersection() {}
 
-    static PrecomputedIntersection prepare_computations(Intersection i, Ray r);
+    static PrecomputedIntersection prepare_computations(Intersection i, Ray r, IntersectionRecord* xs = nullptr);
 };

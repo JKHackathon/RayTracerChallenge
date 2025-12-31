@@ -8,6 +8,7 @@
 #include "rendering/lighting.hpp"
 
 void build_reflective_world(World* w);
+void build_refractive_world(World* w);
 
 int main(int argc, char* argv[]) {
     if (argc > 1 && (std::strcmp(argv[1], "-h") == 0 ||
@@ -30,12 +31,70 @@ int main(int argc, char* argv[]) {
     // Canvas canvas(width, height);
     World w;
 
-    build_reflective_world(&w);
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->material.color = Color(1, 0, 0);
+    floor->material.specular = 0;
+    floor->transform = Transform::translation(0, -.2, 0);
+
+
+    auto water_u = std::make_unique<Plane>();
+    Plane* water = water_u.get();
+    water->material.refractive_index = 1;
+    water->material.transparency = 1;
+    // water->material.reflective = .1;
+    // water->material.color = Color(0, 0, 0.1);
+    water->material.specular = 0;
+    water->material.diffuse = 0;
+    water->material.shininess = 0;
+    water->material.ambient = 0;
+
+    // build_reflective_world(&w);
+    // build_refractive_world(&w);
+    auto wall_u = std::make_unique<Plane>();
+    auto wall = wall_u.get();
+    wall->transform =
+        Transform::translation(0, 0, 15) * Transform::rotation_x(M_PI / 2);
+    CheckerPattern wall_pattern(Color(1, 1, 1), Color(0, 0, 0));
+    wall->material.pattern = &wall_pattern;
+    wall->material.specular = 0;
+
+
+
+    // Spheres
+    // auto sphere_u = std::make_unique<GlassSphere>();
+    // GlassSphere* sphere = sphere_u.get();
+    // sphere->transform = Transform::scaling(2, 2, 2);
+    // sphere->material.refractive_index = 2.5;
+
+    // // Inner air sphere
+    // auto inner_sphere_u = std::make_unique<Sphere>();
+    // Sphere* inner_sphere = inner_sphere_u.get();
+    // inner_sphere->material.transparency = 1;
+    // inner_sphere->material.refractive_index = 1;
+    // inner_sphere->material.ambient = 0;
+    // inner_sphere->material.diffuse = 0;
+    // inner_sphere->material.specular = 0;
+    // inner_sphere->material.shininess = 0;
+    // inner_sphere->material.color = Color(1, 0, 0);
+    // inner_sphere->transform = Transform::scaling(1.8, 1.8, 1.8);
+
+    // Light
+    auto light_u =
+        std::make_unique<PointLight>(Point(-10, 10, -10), Color(1, 1, 1));
+
+    // World
+    w.objects.emplace(wall, std::move(wall_u));
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(water, std::move(water_u));
+    // w.objects.emplace(sphere, std::move(sphere_u));
+    // w.objects.emplace(inner_sphere, std::move(inner_sphere_u));
+    w.light = std::move(light_u);
 
     // Camera
-    Camera camera(300, 150, M_PI / 3);  // 100, 50, M_PI / 3);
+    Camera camera(200, 200, M_PI / 3);  // 100, 50, M_PI / 3);
     camera.transform = Transform::view_transform(
-        Point(0, 1.5, -5), Point(0, 1, 0), Vector(0, 1, 0));
+        Point(0, .01, -5), Point(0, 0, 0), Vector(0, 1, 0));
 
     // Rendering
     auto canvas = camera.render(&w);
@@ -45,6 +104,29 @@ int main(int argc, char* argv[]) {
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
+}
+
+void build_refractive_world(World* w) {
+    // Walls
+    auto wall_u = std::make_unique<Plane>();
+    auto wall = wall_u.get();
+    wall->transform =
+        Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
+    CheckerPattern wall_pattern(Color(1, 1, 1), Color(0, 0, 0));
+    wall->material.pattern = &wall_pattern;
+
+    // Spheres
+    auto sphere_u = std::make_unique<GlassSphere>();
+    GlassSphere* sphere = sphere_u.get();
+
+    // Light
+    auto light_u =
+        std::make_unique<PointLight>(Point(-10, 10, -10), Color(1, 1, 1));
+
+    // World
+    w->objects.emplace(wall, std::move(wall_u));
+    w->objects.emplace(sphere, std::move(sphere_u));
+    w->light = std::move(light_u);
 }
 
 void build_reflective_world(World* w) {
@@ -58,8 +140,8 @@ void build_reflective_world(World* w) {
     auto back_wall_u = std::make_unique<Plane>();
     auto back_wall = back_wall_u.get();
     back_wall->transform =
-        Transform::translation(0, 0, 15) * Transform::rotation_x(M_PI / 2);
-    back_wall->material.color = Color(0, 0, 1);
+        Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
+    back_wall->material.color = Color(1, 1, 1);
 
     // Spheres
     auto middle_s_u = std::make_unique<Sphere>();
@@ -92,14 +174,15 @@ void build_reflective_world(World* w) {
         std::make_unique<PointLight>(Point(-10, 10, -10), Color(1, 1, 1));
 
     // World
-    w->objects.emplace(floor, std::move(floor_u));
+    // w->objects.emplace(floor, std::move(floor_u));
     w->objects.emplace(back_wall, std::move(back_wall_u));
     w->objects.emplace(middle_s, std::move(middle_s_u));
-    w->objects.emplace(right_s, std::move(right_s_u));
-    w->objects.emplace(left_s, std::move(left_s_u));
+    // w->objects.emplace(right_s, std::move(right_s_u));
+    // w->objects.emplace(left_s, std::move(left_s_u));
     w->light = std::move(light_u);
 }
 
+// TODO: this doesnt work because patterns are local!!
 void build_patterns_world(World* w) {
     // Floor
     auto floor_u = std::make_unique<Plane>();
