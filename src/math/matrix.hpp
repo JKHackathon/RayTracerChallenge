@@ -9,16 +9,16 @@ template <typename T>
 concept TupleType = std::is_base_of_v<Tuple, T>;
 
 struct Matrix {
-    std::vector<float> data;
+    std::vector<double> data;
     size_t rows;
     size_t cols;
 
-    Matrix(int i, int j) : cols(j), rows(i), data(i * j, 0) {}
+    Matrix(int i, int j) : cols(j), rows(i), data(i* j, 0) {}
     // what is the most efficient
 
     int coords_to_index(int i, int j) const;
 
-    Matrix& operator=(std::initializer_list<float> values) {
+    Matrix& operator=(std::initializer_list<double> values) {
         if (values.size() != rows * cols)
             throw std::runtime_error(
                 "Initializer list size does not match matrix size");
@@ -26,13 +26,13 @@ struct Matrix {
         return *this;
     }
 
-    float operator()(int i, int j) const { return data[coords_to_index(i, j)]; }
-    float& operator()(int i, int j) { return data[coords_to_index(i, j)]; }
+    double operator()(int i, int j) const { return data[coords_to_index(i, j)]; }
+    double& operator()(int i, int j) { return data[coords_to_index(i, j)]; }
 
     // Faster methods: hash and compare, memcmp w/ vectors
     bool operator==(const Matrix& other) const {
         for (size_t i = 0; i < rows * cols; i++) {
-            if (!float_equal(data[i], other.data[i])) {
+            if (!double_equal(data[i], other.data[i])) {
                 return false;
             }
         }
@@ -52,10 +52,10 @@ struct Matrix {
     // } 
 
     Matrix transpose() const;
-    float determinant() const;
+    double determinant() const;
     Matrix submatrix(size_t remove_row, size_t remove_col) const;
-    float minor(size_t i, size_t j) const;
-    float cofactor(size_t i, size_t j) const;
+    double minor(size_t i, size_t j) const;
+    double cofactor(size_t i, size_t j) const;
 
     // Not the most efficient as will require calc determinant twice. Either
     // return det or accept cause book
@@ -66,8 +66,8 @@ struct Matrix {
 
 inline const Matrix identity_matrix4 = [] {
     Matrix id(4, 4);
-    id = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    id = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
     return id;
-}();
+    }();
 
 #endif

@@ -9,9 +9,9 @@
 
 TEST_CASE("Colors are (red, green, blue) tuples", "[canvas]") {
     Color c(-0.5, 0.4, 1.7);
-    REQUIRE(float_equal(c.r, -0.5));
-    REQUIRE(float_equal(c.g, 0.4));
-    REQUIRE(float_equal(c.b, 1.7));
+    REQUIRE(double_equal(c.r, -0.5));
+    REQUIRE(double_equal(c.g, 0.4));
+    REQUIRE(double_equal(c.b, 1.7));
 }
 
 TEST_CASE("Adding colors", "[canvas]") {
@@ -80,10 +80,10 @@ TEST_CASE("Construcing the PPM pixel data", "[canvas]") {
 TEST_CASE("Splitting long lines in PPM files", "[canvas]") {
     Canvas c(10, 2, Color(1, 0.8, 0.6));
     REQUIRE(c.pixel_data_to_ppm() ==
-            "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n"
-            "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n"
-            "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n"
-            "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n");
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n"
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n"
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n"
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n");
 }
 
 TEST_CASE("PPM files are terminated by a newline character", "[canvas]") {

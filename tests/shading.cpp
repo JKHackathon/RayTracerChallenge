@@ -5,21 +5,21 @@
 #include "../src/rendering/lighting.hpp"
 
 TEST_CASE("The normal on a sphere at a point on the x axis",
-          "[sphere][shading]") {
+    "[sphere][shading]") {
     Sphere s;
     Vector n = s.normal_at(Point(1, 0, 0));
     REQUIRE(n == Vector(1, 0, 0));
 }
 
 TEST_CASE("The normal on a sphere at a point on the y axis",
-          "[sphere][shading]") {
+    "[sphere][shading]") {
     Sphere s;
     Vector n = s.normal_at(Point(0, 1, 0));
     REQUIRE(n == Vector(0, 1, 0));
 }
 
 TEST_CASE("The normal on a sphere at a point on the z axis",
-          "[sphere][shading]") {
+    "[sphere][shading]") {
     Sphere s;
     Vector n = s.normal_at(Point(0, 0, 1));
     REQUIRE(n == Vector(0, 0, 1));
@@ -77,10 +77,10 @@ TEST_CASE("A point light has a position and intensity", "[lights][shading]") {
 TEST_CASE("The default material", "[materials][shading]") {
     Material m;
     REQUIRE(m.color == Color(1, 1, 1));
-    REQUIRE(float_equal(m.ambient, .1f));
-    REQUIRE(float_equal(m.diffuse, .9f));
-    REQUIRE(float_equal(m.specular, .9));
-    REQUIRE(float_equal(m.shininess, 200));
+    REQUIRE(double_equal(m.ambient, .1f));
+    REQUIRE(double_equal(m.diffuse, .9f));
+    REQUIRE(double_equal(m.specular, .9));
+    REQUIRE(double_equal(m.shininess, 200));
 }
 
 TEST_CASE("A sphere has a default material", "[sphere][materials][shading]") {
@@ -90,7 +90,7 @@ TEST_CASE("A sphere has a default material", "[sphere][materials][shading]") {
 }
 
 TEST_CASE("A sphere may be assigned a material",
-          "[sphere][materials][shading]") {
+    "[sphere][materials][shading]") {
     Sphere s;
     Material m;
     m.ambient = 1;
@@ -110,8 +110,8 @@ struct MaterialFixture {
 };
 
 TEST_CASE_METHOD(MaterialFixture,
-                 "Lighting with the eye between the light and the surface",
-                 "[materials][shading]") {
+    "Lighting with the eye between the light and the surface",
+    "[materials][shading]") {
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, -10), Color(1, 1, 1));
@@ -133,8 +133,8 @@ TEST_CASE_METHOD(
 }
 
 TEST_CASE_METHOD(MaterialFixture,
-                 "Lighting with eye opposite surface, light offset 45°",
-                 "[materials][shading]") {
+    "Lighting with eye opposite surface, light offset 45°",
+    "[materials][shading]") {
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 10, -10), Color(1, 1, 1));
@@ -144,8 +144,8 @@ TEST_CASE_METHOD(MaterialFixture,
 }
 
 TEST_CASE_METHOD(MaterialFixture,
-                 "Lighting with eye in the path of the reflection vector",
-                 "[materials][shading]") {
+    "Lighting with eye in the path of the reflection vector",
+    "[materials][shading]") {
     Vector eye(0, -sqrt(2) / 2, -sqrt(2) / 2);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 10, -10), Color(1, 1, 1));
@@ -155,7 +155,7 @@ TEST_CASE_METHOD(MaterialFixture,
 }
 
 TEST_CASE_METHOD(MaterialFixture, "Lighting with the light behind the surface",
-                 "[materials][shading]") {
+    "[materials][shading]") {
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, 10), Color(1, 1, 1));
@@ -165,7 +165,7 @@ TEST_CASE_METHOD(MaterialFixture, "Lighting with the light behind the surface",
 }
 
 TEST_CASE_METHOD(MaterialFixture, "Lighting with the surface in shadow",
-                 "[materials][shading][shadows]") {
+    "[materials][shading][shadows]") {
     Vector eye(0, 0, -1);
     Vector normal(0, 0, -1);
     PointLight light(Point(0, 0, -10), Color(1, 1, 1));

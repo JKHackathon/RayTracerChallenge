@@ -15,7 +15,7 @@ Matrix Matrix::operator*(const Matrix& other) const {
     Matrix m(rows, other.cols);
     for (size_t i = 0; i < rows; i++) {
         for (size_t j_1 = 0; j_1 < cols; j_1++) {
-            float ij_1 = (*this)(i, j_1);
+            double ij_1 = (*this)(i, j_1);
             for (size_t j_2 = 0; j_2 < other.cols; j_2++) {
                 m(i, j_2) += ij_1 * other(j_1, j_2);
             }
@@ -27,7 +27,7 @@ Matrix Matrix::operator*(const Matrix& other) const {
 // Note: Tuple is always a 4x1 in our definition
 Tuple Matrix::operator*(const Tuple& other) const {
     Matrix b(4, 1);
-    b = {other.x, other.y, other.z, other.w};
+    b = { other.x, other.y, other.z, other.w };
     Matrix prod = (*this) * b;
     return Tuple(prod(0, 0), prod(1, 0), prod(2, 0), prod(3, 0));
 }
@@ -42,7 +42,7 @@ Matrix Matrix::transpose() const {
     return transpose;
 }
 
-float Matrix::determinant() const {
+double Matrix::determinant() const {
     // if (rows != cols) {
     //     throw std::invalid_argument("cannot find determinant of non-square matrix");
     // }
@@ -50,7 +50,7 @@ float Matrix::determinant() const {
     if (rows == 2)
         return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
 
-    float determinant = 0;
+    double determinant = 0;
     for (size_t j = 0; j < cols; j++) {
         determinant += (*this)(0, j) * this->cofactor(0, j);
     }
@@ -76,13 +76,13 @@ Matrix Matrix::submatrix(size_t remove_row, size_t remove_col) const {
     return submatrix;
 }
 
-float Matrix::minor(size_t i, size_t j) const {
+double Matrix::minor(size_t i, size_t j) const {
     Matrix submatrix = this->submatrix(i, j);
     return submatrix.determinant();
 }
 
-float Matrix::cofactor(size_t i, size_t j) const {
-    float minor = this->minor(i, j);
+double Matrix::cofactor(size_t i, size_t j) const {
+    double minor = this->minor(i, j);
     return (i + j) % 2 == 0 ? minor : -minor;
 }
 
@@ -90,10 +90,10 @@ Matrix Matrix::inverse() const {
     assert(this->is_invertible() && "matrix not invertible");
     Matrix M2(rows, cols);
 
-    float det = this->determinant();
+    double det = this->determinant();
     for (size_t i = 0; i < rows; i++) {
         for (size_t j = 0; j < cols; j++) {
-            float c = this->cofactor(i, j);
+            double c = this->cofactor(i, j);
             M2(j, i) = c / det;
         }
     }

@@ -6,15 +6,15 @@
 
 TEST_CASE("Transparency and Refractive Index for the default material", "[refraction][materials]") {
     Material m;
-    REQUIRE(float_equal(m.transparency, 0));
-    REQUIRE(float_equal(m.refractive_index, 1));
+    REQUIRE(double_equal(m.transparency, 0));
+    REQUIRE(double_equal(m.refractive_index, 1));
 }
 
 TEST_CASE("A helper for producing a sphere with a glassy material", "[refraction][spheres]") {
     GlassSphere s;
     REQUIRE(s.transform == identity_matrix4);
-    REQUIRE(float_equal(s.material.transparency, 1));
-    REQUIRE(float_equal(s.material.refractive_index, 1.5));
+    REQUIRE(double_equal(s.material.transparency, 1));
+    REQUIRE(double_equal(s.material.refractive_index, 1.5));
 }
 
 TEST_CASE("Finding n1 and n2 at various intersections", "[refraction][intersections]") {
@@ -35,13 +35,13 @@ TEST_CASE("Finding n1 and n2 at various intersections", "[refraction][intersecti
         Intersection(3.25, &C), Intersection(4.75, &B),
         Intersection(5.25, &C), Intersection(6, &A));
 
-    std::vector<float> n1 = { 1, 1.5, 2, 2.5, 2.5, 1.5 };
-    std::vector<float> n2 = { 1.5, 2, 2.5, 2.5, 1.5, 1 };
+    std::vector<double> n1 = { 1, 1.5, 2, 2.5, 2.5, 1.5 };
+    std::vector<double> n2 = { 1.5, 2, 2.5, 2.5, 1.5, 1 };
 
     for (int i = 0; i < xs.count; i++) {
         auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[i], r, &xs);
-        REQUIRE(float_equal(comps.n1, n1[i]));
-        REQUIRE(float_equal(comps.n2, n2[i]));
+        REQUIRE(double_equal(comps.n1, n1[i]));
+        REQUIRE(double_equal(comps.n2, n2[i]));
     }
 }
 

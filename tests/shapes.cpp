@@ -88,7 +88,7 @@ TEST_CASE("Ray intersecting a plane from above", "[shapes][planes]") {
     Ray r(Point(0, 1, 0), Vector(0, -1, 0));
     auto xs = p.intersect(r);
     REQUIRE(xs.count == 1);
-    REQUIRE(float_equal(xs.intersections[0].t, 1));
+    REQUIRE(double_equal(xs.intersections[0].t, 1));
     REQUIRE(xs.intersections[0].object == &p);
 }
 
@@ -97,6 +97,6 @@ TEST_CASE("Ray intersecting a plane from below", "[shapes][planes]") {
     Ray r(Point(0, -1, 0), Vector(0, 1, 0));
     auto xs = p.intersect(r);
     REQUIRE(xs.count == 1);
-    REQUIRE(float_equal(xs.intersections[0].t, 1));
+    REQUIRE(double_equal(xs.intersections[0].t, 1));
     REQUIRE(xs.intersections[0].object == &p);
 }

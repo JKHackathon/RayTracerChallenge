@@ -6,13 +6,13 @@
 struct Camera {
     size_t hsize;
     size_t vsize;
-    float fov;
+    double fov;
     Transform transform;
-    float pixel_size;
-    float half_width;
-    float half_height;
+    double pixel_size;
+    double half_width;
+    double half_height;
 
-    Camera(size_t hsize, size_t vsize, float fov);
+    Camera(size_t hsize, size_t vsize, double fov);
 
     Ray ray_for_pixel(size_t px, size_t py) const;
     Canvas render(const World* w) const;

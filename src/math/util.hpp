@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-const float EPSILON = 0.0001;
+const double EPSILON = 0.0001;
 
-inline bool float_equal(float a, float b) { return std::fabs(a - b) < EPSILON; }
+inline bool double_equal(double a, double b) { return std::fabs(a - b) < EPSILON; }
 
 #endif

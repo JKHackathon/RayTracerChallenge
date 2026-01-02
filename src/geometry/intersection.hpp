@@ -6,10 +6,10 @@
 struct Shape;
 
 struct Intersection {
-    float t;
+    double t;
     const Shape* object;  // const
 
-    Intersection(float t, const Shape* object) : t(t), object(object) {}
+    Intersection(double t, const Shape* object) : t(t), object(object) {}
 
     bool operator==(const Intersection& other) const {
         return t == other.t && object == other.object;
@@ -46,7 +46,7 @@ struct IntersectionRecord {
 };
 
 struct PrecomputedIntersection {
-    float t;
+    double t;
     const Shape* object;
     Point point;
     Vector eye;
@@ -56,8 +56,8 @@ struct PrecomputedIntersection {
     Vector reflect_dir;
 
     // refraction
-    float n1;
-    float n2;
+    double n1;
+    double n2;
     Point under_point; // origin of refracted rays under surface
 
     PrecomputedIntersection() {}

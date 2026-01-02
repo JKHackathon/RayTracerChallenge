@@ -15,7 +15,7 @@ struct Ray {
 
     Ray(Point origin, Vector dir) : origin(origin), dir(dir) {}
 
-    Point position(float t) { return origin + dir * t; }
+    Point position(double t) { return origin + dir * t; }
 
     Ray transform(Transform m) const { return Ray(m * origin, m * dir); }
 };

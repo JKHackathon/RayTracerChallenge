@@ -8,27 +8,27 @@
 TEST_CASE("Constructing a camera", "[scene][camera]") {
     size_t hsize = 160;
     size_t vsize = 120;
-    float fov = M_PI / 2;
+    double fov = M_PI / 2;
     Camera c(hsize, vsize, fov);
 
     REQUIRE(c.hsize == 160);
     REQUIRE(c.vsize == 120);
-    REQUIRE(float_equal(c.fov, M_PI / 2));
+    REQUIRE(double_equal(c.fov, M_PI / 2));
     REQUIRE(c.transform == identity_matrix4);
 }
 
 TEST_CASE("The pixel size for a horizontal canvas", "[scene][camera]") {
     Camera c(200, 125, M_PI / 2);
-    REQUIRE(float_equal(c.pixel_size, 0.01));
+    REQUIRE(double_equal(c.pixel_size, 0.01));
 }
 
 TEST_CASE("The pixel size for a vertical canvas", "[scene][camera]") {
     Camera c(125, 200, M_PI / 2);
-    REQUIRE(float_equal(c.pixel_size, 0.01));
+    REQUIRE(double_equal(c.pixel_size, 0.01));
 }
 
 TEST_CASE("Constructing a ray through the center of the canvas",
-          "[scene][camera]") {
+    "[scene][camera]") {
     Camera c(201, 101, M_PI / 2);
     Ray r = c.ray_for_pixel(100, 50);
     REQUIRE(r.origin == Point(0, 0, 0));
@@ -36,7 +36,7 @@ TEST_CASE("Constructing a ray through the center of the canvas",
 }
 
 TEST_CASE("Constructing a ray through the corner of the canvas",
-          "[scene][camera]") {
+    "[scene][camera]") {
     Camera c(201, 101, M_PI / 2);
     Ray r = c.ray_for_pixel(0, 0);
     REQUIRE(r.origin == Point(0, 0, 0));
@@ -44,7 +44,7 @@ TEST_CASE("Constructing a ray through the corner of the canvas",
 }
 
 TEST_CASE("Constructing a ray when the camera is transformed",
-          "[scene][camera]") {
+    "[scene][camera]") {
     Camera c(201, 101, M_PI / 2);
     c.transform =
         Transform::rotation_y(M_PI / 4) * Transform::translation(0, -2, 5);

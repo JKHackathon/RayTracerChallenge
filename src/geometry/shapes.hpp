@@ -55,7 +55,7 @@ private:
 struct Sphere : public Shape {
 public:
     Point origin;
-    float radius;
+    double radius;
     // Transform transform;
     // Material material;
 
@@ -94,7 +94,7 @@ private:
             return IntersectionRecord();
         }
 
-        float t = -local_r.origin.y / local_r.dir.y;
+        double t = -local_r.origin.y / local_r.dir.y;
         return Intersection(t, this);
     }
 };

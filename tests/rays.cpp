@@ -28,8 +28,8 @@ TEST_CASE("A ray intersects a sphere at two points", "[rays]") {
     IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
-    REQUIRE(float_equal(xs.intersections[0].t, 4));
-    REQUIRE(float_equal(xs.intersections[1].t, 6));
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
 }
 
 TEST_CASE("A ray intersects a sphere at a tangent", "[rays]") {
@@ -38,8 +38,8 @@ TEST_CASE("A ray intersects a sphere at a tangent", "[rays]") {
     IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
-    REQUIRE(float_equal(xs.intersections[0].t, 5));
-    REQUIRE(float_equal(xs.intersections[1].t, 5));
+    REQUIRE(double_equal(xs.intersections[0].t, 5));
+    REQUIRE(double_equal(xs.intersections[1].t, 5));
 }
 
 TEST_CASE("A ray misses a sphere", "[rays]") {
@@ -57,8 +57,8 @@ TEST_CASE("A ray originates inside a sphere", "[rays]") {
     IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
-    REQUIRE(float_equal(xs.intersections[0].t, -1));
-    REQUIRE(float_equal(xs.intersections[1].t, 1));
+    REQUIRE(double_equal(xs.intersections[0].t, -1));
+    REQUIRE(double_equal(xs.intersections[1].t, 1));
 }
 
 TEST_CASE("A sphere is behind a ray", "[rays]") {
@@ -67,14 +67,14 @@ TEST_CASE("A sphere is behind a ray", "[rays]") {
     IntersectionRecord xs = s.get()->intersect(r);
 
     REQUIRE(xs.count == 2);
-    REQUIRE(float_equal(xs.intersections[0].t, -6));
-    REQUIRE(float_equal(xs.intersections[1].t, -4));
+    REQUIRE(double_equal(xs.intersections[0].t, -6));
+    REQUIRE(double_equal(xs.intersections[1].t, -4));
 }
 
 TEST_CASE("An intersection encapsulates t and object", "[rays]") {
     auto s = std::make_unique<Sphere>();
     Intersection i(3.5, s.get());
-    REQUIRE(float_equal(i.t, 3.5));
+    REQUIRE(double_equal(i.t, 3.5));
     REQUIRE(i.object == s.get());
 }
 
@@ -83,8 +83,8 @@ TEST_CASE("Aggregating intersections", "[rays]") {
     Intersection i1(1, s.get());
     Intersection i2(2, s.get());
     IntersectionRecord xs(i1, i2);
-    REQUIRE(float_equal(xs.intersections[0].t, 1));
-    REQUIRE(float_equal(xs.intersections[1].t, 2));
+    REQUIRE(double_equal(xs.intersections[0].t, 1));
+    REQUIRE(double_equal(xs.intersections[1].t, 2));
 }
 
 TEST_CASE("Intersect sets the object on the intersection", "[rays]") {
@@ -169,8 +169,8 @@ TEST_CASE("Intersecting a scaled sphere with a ray", "[rays]") {
     IntersectionRecord xs = s->intersect(r);
 
     REQUIRE(xs.count == 2);
-    REQUIRE(float_equal(xs.intersections[0].t, 3));
-    REQUIRE(float_equal(xs.intersections[1].t, 7));
+    REQUIRE(double_equal(xs.intersections[0].t, 3));
+    REQUIRE(double_equal(xs.intersections[1].t, 7));
 }
 
 TEST_CASE("Intersecting a translated sphere with a ray", "[rays]") {

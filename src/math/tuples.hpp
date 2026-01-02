@@ -12,15 +12,15 @@ struct Point;
 struct Vector;
 
 struct Tuple {
-    float x;
-    float y;
-    float z;
-    float w;
+    double x;
+    double y;
+    double z;
+    double w;
 
-    Tuple(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+    Tuple(double x, double y, double z, double w) : x(x), y(y), z(z), w(w) {}
 
-    bool is_point() const { return float_equal(w, 1.0); }
-    bool is_vector() const { return float_equal(w, 0.0); }
+    bool is_point() const { return double_equal(w, 1.0); }
+    bool is_vector() const { return double_equal(w, 0.0); }
 
     static Tuple from_point(const Point& p);
     static Tuple from_vector(const Vector& v);
@@ -30,8 +30,8 @@ struct Tuple {
     operator Vector() const;
 
     bool operator==(const Tuple& other) const {
-        return float_equal(x, other.x) && float_equal(y, other.y) &&
-               float_equal(z, other.z) && float_equal(w, other.w);
+        return double_equal(x, other.x) && double_equal(y, other.y) &&
+            double_equal(z, other.z) && double_equal(w, other.w);
     }
 
     Tuple operator+(const Tuple& other) const {
@@ -42,55 +42,55 @@ struct Tuple {
         return Tuple(x - other.x, y - other.y, z - other.z, w - other.w);
     }
 
-    Tuple operator*(const float c) const {
+    Tuple operator*(const double c) const {
         return Tuple(x * c, y * c, z * c, w * c);
     }
 
-    Tuple operator/(const float c) const {
+    Tuple operator/(const double c) const {
         return Tuple(x / c, y / c, z / c, w / c);
     }
 };
 
-inline Tuple operator*(const float c, const Tuple& tuple) {
+inline Tuple operator*(const double c, const Tuple& tuple) {
     return Tuple(tuple.x * c, tuple.y * c, tuple.z * c, tuple.w * c);
 }
 
 // TODO: should include overloads for operator* and operator/???
 struct Point : public Tuple {
     Point() : Tuple(0, 0, 0, 1) {}
-    Point(float x, float y, float z) : Tuple(x, y, z, 1.0) {}
+    Point(double x, double y, double z) : Tuple(x, y, z, 1.0) {}
     // explicit Point(const Tuple& t) : Tuple(t.x, t.y, t.z, 1) {}
 };
 
 struct Vector : public Tuple {
     Vector() : Tuple(0, 0, 0, 0) {}
-    Vector(float x, float y, float z) : Tuple(x, y, z, 0.0) {}
+    Vector(double x, double y, double z) : Tuple(x, y, z, 0.0) {}
     // explicit Vector(const Tuple& t) : Tuple(t.x, t.y, t.z, 0) {}
 
     using Tuple::operator-;
     Vector operator-() const {  // slight deviation from book as points should
-                                // not be allowed to be negated
+        // not be allowed to be negated
         return Vector(-x, -y, -z);
     }
 
-    float magnitude() const {
+    double magnitude() const {
         return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2) + pow(w, 2));
     }
 
     Vector normalized() const {
-        float magnitude = this->magnitude();
+        double magnitude = this->magnitude();
         return Vector(x / magnitude, y / magnitude, z / magnitude);
     }
 
     // Gives angle relationship between. 1 = same dir, -1 = opp dir, 0 = 90°
-    float dot(const Vector& other) const {
+    double dot(const Vector& other) const {
         return x * other.x + y * other.y + z * other.z;
     }
 
     // Gives perpendicular vector
     Vector cross(const Vector& other) const {
         return Vector(y * other.z - z * other.y, z * other.x - x * other.z,
-                      x * other.y - y * other.x);
+            x * other.y - y * other.x);
     }
 
     Vector reflect(const Vector& normal) const {

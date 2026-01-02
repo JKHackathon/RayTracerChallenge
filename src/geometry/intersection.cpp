@@ -7,7 +7,7 @@
 #include <list>
 
 std::optional<Intersection> IntersectionRecord::hit() const {
-    float hit_val = MAXFLOAT;
+    double hit_val = MAXFLOAT;
     std::optional<Intersection> hit;
     for (const auto& intersection : intersections) {
         if (intersection.t >= 0 &&
@@ -38,9 +38,9 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
         comps.normal = -comps.normal;
     }
 
-    float eps = EPSILON * fmax(1, sqrt(pow(comps.point.x, 2) + pow(comps.point.y, 2) + pow(comps.point.z, 2)));//comps.t * 100);
-    // float cos_theta = abs(comps.normal.dot(r.dir));
-    // float offset = EPSILON / std::max(cos_theta, EPSILON);
+    double eps = EPSILON * fmax(1, sqrt(pow(comps.point.x, 2) + pow(comps.point.y, 2) + pow(comps.point.z, 2)));//comps.t * 100);
+    // double cos_theta = abs(comps.normal.dot(r.dir));
+    // double offset = EPSILON / std::max(cos_theta, EPSILON);
     comps.over_point = comps.point + comps.normal * eps;//EPSILON;
 
     // Reflections

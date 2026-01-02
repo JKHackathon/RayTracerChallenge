@@ -39,14 +39,14 @@ TEST_CASE("Intersect a world with a ray", "[world][scene]") {
     auto xs = w.intersect_world(r);
 
     REQUIRE(xs.count == 4);
-    REQUIRE(float_equal(xs.intersections[0].t, 4));
-    REQUIRE(float_equal(xs.intersections[1].t, 4.5));
-    REQUIRE(float_equal(xs.intersections[2].t, 5.5));
-    REQUIRE(float_equal(xs.intersections[3].t, 6));
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 4.5));
+    REQUIRE(double_equal(xs.intersections[2].t, 5.5));
+    REQUIRE(double_equal(xs.intersections[3].t, 6));
 }
 
 TEST_CASE("Precomputing the state of an intersection",
-          "[scene][intersections]") {
+    "[scene][intersections]") {
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
     auto shape = std::make_unique<Sphere>();
     Intersection i(4, shape.get());
@@ -60,7 +60,7 @@ TEST_CASE("Precomputing the state of an intersection",
 }
 
 TEST_CASE("The hit, when an intersection occurs on the outside",
-          "[scene][intersections]") {
+    "[scene][intersections]") {
     Ray r(Point(0, 0, -5), Vector(0, 0, 1));
     auto shape = std::make_unique<Sphere>();
     Intersection i(4, shape.get());
@@ -69,7 +69,7 @@ TEST_CASE("The hit, when an intersection occurs on the outside",
 }
 
 TEST_CASE("The hit, when an intersection occurs on the inside",
-          "[scene][intersections]") {
+    "[scene][intersections]") {
     Ray r(Point(0, 0, 0), Vector(0, 0, 1));
     auto shape = std::make_unique<Sphere>();
     Intersection i(1, shape.get());

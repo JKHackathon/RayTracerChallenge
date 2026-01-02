@@ -2,10 +2,10 @@
 
 #include <iomanip>
 
-Camera::Camera(size_t hsize, size_t vsize, float fov)
+Camera::Camera(size_t hsize, size_t vsize, double fov)
     : hsize(hsize), vsize(vsize), fov(fov), transform(identity_matrix4) {
-    float half_view = tan(fov / 2);
-    float aspect = float(hsize) / vsize;
+    double half_view = tan(fov / 2);
+    double aspect = float(hsize) / vsize;
 
     if (aspect >= 1) {
         half_width = half_view;
@@ -21,12 +21,12 @@ Camera::Camera(size_t hsize, size_t vsize, float fov)
 
 Ray Camera::ray_for_pixel(size_t px, size_t py) const {
     // Offset from edge of canvas to pixel's center
-    float xoffset = (px + 0.5) * pixel_size;
-    float yoffset = (py + 0.5) * pixel_size;
+    double xoffset = (px + 0.5) * pixel_size;
+    double yoffset = (py + 0.5) * pixel_size;
 
     // untransformed coords of pixel in world space (camera looks toward -z)
-    float world_x = half_width - xoffset;
-    float world_y = half_height - yoffset;
+    double world_x = half_width - xoffset;
+    double world_y = half_height - yoffset;
 
     // Using camera matrix, transfomr canvas point + origin, compute ray's dir
     // vector (canvas at z=-1)
@@ -48,7 +48,7 @@ Canvas Camera::render(const World* w) const {
             image.write_pixel(x, y, c);
         }
         // Progress bar update (per row)
-        float progress = static_cast<float>(y + 1) / vsize;
+        double progress = static_cast<float>(y + 1) / vsize;
         int pos = static_cast<int>(bar_width * progress);
 
         std::cout << "\r[";
@@ -61,7 +61,7 @@ Canvas Camera::render(const World* w) const {
                 std::cout << " ";
         }
         std::cout << "] " << std::setw(3) << static_cast<int>(progress * 100)
-                  << "%";
+            << "%";
 
         std::cout.flush();
     }

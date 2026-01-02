@@ -64,7 +64,7 @@ Color World::color_at(Ray r, int recursion_depth) const {
 
 bool World::is_shadowed(Point p) const {
     Vector p_to_light = light.get()->pos - p;
-    float distance = p_to_light.magnitude();
+    double distance = p_to_light.magnitude();
     Vector dir_to_light = p_to_light.normalized();
 
     Ray r(p, dir_to_light);
@@ -74,7 +74,7 @@ bool World::is_shadowed(Point p) const {
 }
 
 Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH || float_equal(comps.object->material.reflective, 0)) {
+    if (recursion_depth >= REFLECTION_DEPTH || double_equal(comps.object->material.reflective, 0)) {
         return Color(0, 0, 0);
     }
 
@@ -83,14 +83,14 @@ Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth)
 }
 
 Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH || float_equal(comps.object->material.transparency, 0)) {
+    if (recursion_depth >= REFLECTION_DEPTH || double_equal(comps.object->material.transparency, 0)) {
         return Color(0, 0, 0);
     }
 
     // Snell's Law
-    float n_ratio = comps.n1 / comps.n2;
-    float cos_i = comps.eye.dot(comps.normal);
-    float sin2_t = pow(n_ratio, 2) * (1 - pow(cos_i, 2));
+    double n_ratio = comps.n1 / comps.n2;
+    double cos_i = comps.eye.dot(comps.normal);
+    double sin2_t = pow(n_ratio, 2) * (1 - pow(cos_i, 2));
 
     if (sin2_t > 1) { // Total internal reflection
         assert(false);
@@ -98,7 +98,7 @@ Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth)
         return Color(0, 0, 0);
     }
 
-    float cos_t = sqrt(1 - sin2_t);
+    double cos_t = sqrt(1 - sin2_t);
     Vector refracted_dir = comps.normal * (n_ratio * cos_i - cos_t) - comps.eye * n_ratio;
     Ray refracted_ray(comps.under_point, refracted_dir.normalized());
 

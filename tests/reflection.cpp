@@ -7,7 +7,7 @@
 
 TEST_CASE("Reflectivity for the default material", "[reflections][materials]") {
     Material m;
-    REQUIRE(float_equal(m.reflective, 0));
+    REQUIRE(double_equal(m.reflective, 0));
 }
 
 TEST_CASE("Precomputing the reflection vector",

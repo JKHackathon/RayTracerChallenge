@@ -17,16 +17,16 @@ struct Transform final : public Matrix {
         return Transform(Matrix::operator*(other));
     }
 
-    static Transform translation(float x, float y, float z);
+    static Transform translation(double x, double y, double z);
 
-    static Transform scaling(float x, float y, float z);
+    static Transform scaling(double x, double y, double z);
 
-    static Transform rotation_x(float rad);
-    static Transform rotation_y(float rad);
-    static Transform rotation_z(float rad);
+    static Transform rotation_x(double rad);
+    static Transform rotation_y(double rad);
+    static Transform rotation_z(double rad);
 
-    static Transform shearing(float x_y, float x_z, float y_x, float y_z,
-                              float z_x, float z_y);
+    static Transform shearing(double x_y, double x_z, double y_x, double y_z,
+        double z_x, double z_y);
 
     // TODO: what does step 3 mean? (pg 99)
     static Transform view_transform(Point from, Point to, Vector up);
