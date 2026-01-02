@@ -9,16 +9,108 @@
 
 Canvas reflection_and_refraction_scene();
 Canvas shadow_puppets_scene();
+Canvas glass_air_bubble_forum_scene();
+Canvas glass_air_bubble_exact_scene();
 
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = shadow_puppets_scene(); //reflection_and_refraction_scene(); //
+    Canvas canvas = glass_air_bubble_exact_scene(); //reflection_and_refraction_scene(); //shadow_puppets_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("output.ppm");
+    std::ofstream outputFile("glass_hollow_noreflection-1.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
+}
+
+Canvas glass_air_bubble_exact_scene() {
+    Camera camera(300, 300, .45);
+    camera.transform = Transform::view_transform(
+        Point(0, 0, -5), Point(0, 0, 0), Vector(0, 1, 0));
+
+    auto light_u = std::make_unique<PointLight>(Point(2, 10, -5), Color(.9, .9, .9));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::translation(0, 0, 10) * Transform::rotation_x(M_PI / 2);
+    CheckerPattern floor_pattern(Color(.15, .15, .15), Color(.85, .85, .85));
+    floor->material.pattern = &floor_pattern;
+    floor->material.ambient = .8;
+    floor->material.diffuse = .2;
+    floor->material.specular = 0;
+
+    auto glass_sphere_u = std::make_unique<Sphere>();
+    Sphere* glass_sphere = glass_sphere_u.get();
+    glass_sphere->material.color = Color(1, 1, 1);
+    glass_sphere->material.ambient = 0;
+    glass_sphere->material.diffuse = 0;
+    glass_sphere->material.specular = .9;
+    glass_sphere->material.shininess = 300;
+    glass_sphere->material.reflective = .9;
+    glass_sphere->material.transparency = .9;
+    glass_sphere->material.refractive_index = 1.5;
+
+    auto inner_air_sphere_u = std::make_unique<Sphere>();
+    Sphere* inner_air_sphere = inner_air_sphere_u.get();
+    inner_air_sphere->transform = Transform::scaling(.5, .5, .5);
+    inner_air_sphere->material.ambient = 0;
+    inner_air_sphere->material.diffuse = 0;
+    inner_air_sphere->material.specular = 0.9;
+    inner_air_sphere->material.shininess = 300;
+    inner_air_sphere->material.reflective = .9;
+    inner_air_sphere->material.transparency = .9;
+    inner_air_sphere->material.refractive_index = 1.0000034;
+    inner_air_sphere->material.color = Color(1, 1, 1);
+
+    World w;
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(glass_sphere, std::move(glass_sphere_u));
+    w.objects.emplace(inner_air_sphere, std::move(inner_air_sphere_u));
+    std::cout << "Hollow glass - no reflections - colors 1\n";
+    w.light = std::move(light_u);
+
+    return camera.render(&w);
+}
+
+Canvas glass_air_bubble_forum_scene() {
+    Camera camera(512, 512, M_PI / 3);
+    camera.transform = Transform::view_transform(
+        Point(0, 2.5, 0), Point(0, 0, 0), Vector(1, 0, 0));
+
+    auto light_u = std::make_unique<PointLight>(Point(2, 10, -5), Color(.9, .9, .9));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::translation(0, -5, 0);//(0, -10, 0);
+    CheckerPattern floor_pattern(Color(0, 0, 0), Color(1, 1, 1));
+    floor->material.pattern = &floor_pattern;
+
+    auto glass_sphere_u = std::make_unique<Sphere>();
+    Sphere* glass_sphere = glass_sphere_u.get();
+    glass_sphere->material.diffuse = .1;
+    glass_sphere->material.shininess = 300;
+    glass_sphere->material.reflective = 0;//1;
+    glass_sphere->material.transparency = 1;
+    glass_sphere->material.refractive_index = 1;//.52;
+    glass_sphere->material.color = Color(0, 0, .1);
+
+    auto inner_air_sphere_u = std::make_unique<Sphere>();
+    Sphere* inner_air_sphere = inner_air_sphere_u.get();
+    inner_air_sphere->transform = Transform::scaling(.5, .5, .5);
+    inner_air_sphere->material.diffuse = .1;
+    inner_air_sphere->material.shininess = 300;
+    inner_air_sphere->material.reflective = 1;
+    inner_air_sphere->material.transparency = 1;
+    inner_air_sphere->material.refractive_index = 1;
+    inner_air_sphere->material.color = Color(0, 0, .1);
+
+    World w;
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(glass_sphere, std::move(glass_sphere_u));
+    // w.objects.emplace(inner_air_sphere, std::move(inner_air_sphere_u));
+    w.light = std::move(light_u);
+
+    return camera.render(&w);
 }
 
 Canvas shadow_puppets_scene() {
@@ -211,17 +303,17 @@ Canvas reflection_and_refraction_scene() {
     World w;
 
     w.objects.emplace(floor, std::move(floor_u));
-    // w.objects.emplace(ceiling, std::move(ceiling_u));
-    // w.objects.emplace(north_wall, std::move(north_wall_u));
-    // w.objects.emplace(west_wall, std::move(west_wall_u));
-    // w.objects.emplace(south_wall, std::move(south_wall_u));
-    // w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
-    // w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
-    // w.objects.emplace(b_sphere_3, std::move(b_sphere_3_u));
-    // w.objects.emplace(b_sphere_4, std::move(b_sphere_4_u));
-    // w.objects.emplace(red_sphere, std::move(red_sphere_u));
-    // w.objects.emplace(blue_sphere, std::move(blue_sphere_u));
-    // w.objects.emplace(green_sphere, std::move(green_sphere_u));
+    w.objects.emplace(ceiling, std::move(ceiling_u));
+    w.objects.emplace(north_wall, std::move(north_wall_u));
+    w.objects.emplace(west_wall, std::move(west_wall_u));
+    w.objects.emplace(south_wall, std::move(south_wall_u));
+    w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
+    w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
+    w.objects.emplace(b_sphere_3, std::move(b_sphere_3_u));
+    w.objects.emplace(b_sphere_4, std::move(b_sphere_4_u));
+    w.objects.emplace(red_sphere, std::move(red_sphere_u));
+    w.objects.emplace(blue_sphere, std::move(blue_sphere_u));
+    w.objects.emplace(green_sphere, std::move(green_sphere_u));
     w.light = std::move(light_u);
 
     return camera.render(&w);

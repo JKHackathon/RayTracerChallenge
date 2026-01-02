@@ -55,7 +55,7 @@ Color World::color_at(Ray r, int recursion_depth) const {
         return Color(0, 0, 0);
     }
 
-    auto comps = PrecomputedIntersection::prepare_computations(hit.value(), r);
+    auto comps = PrecomputedIntersection::prepare_computations(hit.value(), r, &xs);
     // ---- DEBUGGING: visualize which object was hit ----
     // if (hit->object->material.reflective == 1) return Color(1, 0, 0); // red = self-hit
     // else if (hit->object->material.reflective != 1) return Color(0, 1, 0);
@@ -74,7 +74,7 @@ bool World::is_shadowed(Point p) const {
 }
 
 Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH || double_equal(comps.object->material.reflective, 0)) {
+    if (recursion_depth >= REFLECTION_DEPTH - 1 || double_equal(comps.object->material.reflective, 0)) {
         return Color(0, 0, 0);
     }
 
@@ -83,8 +83,11 @@ Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth)
 }
 
 Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH || double_equal(comps.object->material.transparency, 0)) {
-        return Color(0, 0, 0);
+    if (recursion_depth >= REFLECTION_DEPTH - 1 || double_equal(comps.object->material.transparency, 0)) {
+        if (double_equal(comps.object->material.transparency, 0)) {
+            return Color(0,0,0);
+        }
+        return Color(0, 1, 0);
     }
 
     // Snell's Law
@@ -93,9 +96,9 @@ Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth)
     double sin2_t = pow(n_ratio, 2) * (1 - pow(cos_i, 2));
 
     if (sin2_t > 1) { // Total internal reflection
-        assert(false);
-        std::cout << "Total Internal reflection!!!\n";
-        return Color(0, 0, 0);
+        // assert(false);
+        // std::cout << "Total Internal reflection!!!\n";
+        return Color(1, 0, 0);
     }
 
     double cos_t = sqrt(1 - sin2_t);

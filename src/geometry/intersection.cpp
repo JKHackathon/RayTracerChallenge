@@ -41,13 +41,13 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
     double eps = EPSILON * fmax(1, sqrt(pow(comps.point.x, 2) + pow(comps.point.y, 2) + pow(comps.point.z, 2)));//comps.t * 100);
     // double cos_theta = abs(comps.normal.dot(r.dir));
     // double offset = EPSILON / std::max(cos_theta, EPSILON);
-    comps.over_point = comps.point + comps.normal * eps;//EPSILON;
+    comps.over_point = comps.point + comps.normal * EPSILON;
 
     // Reflections
     comps.reflect_dir = r.dir.reflect(comps.normal).normalized();
 
     // Refraction
-    comps.under_point = comps.point - comps.normal * .001;
+    comps.under_point = comps.point - comps.normal * EPSILON;
 
     if (!xs) {
         return comps;
