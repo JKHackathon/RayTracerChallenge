@@ -38,8 +38,10 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
         comps.normal = -comps.normal;
     }
 
-    // float eps = 0;//EPSILON * fmax(1, comps.t * 2);
-    comps.over_point = comps.point + comps.normal * EPSILON;
+    float eps = EPSILON * fmax(1, sqrt(pow(comps.point.x, 2) + pow(comps.point.y, 2) + pow(comps.point.z, 2)));//comps.t * 100);
+    // float cos_theta = abs(comps.normal.dot(r.dir));
+    // float offset = EPSILON / std::max(cos_theta, EPSILON);
+    comps.over_point = comps.point + comps.normal * eps;//EPSILON;
 
     // Reflections
     comps.reflect_dir = r.dir.reflect(comps.normal).normalized();

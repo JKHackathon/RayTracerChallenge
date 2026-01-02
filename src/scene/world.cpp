@@ -41,7 +41,7 @@ Color World::shade_hit(PrecomputedIntersection comps, int recursion_depth) const
     bool shadowed = is_shadowed(comps.over_point);
     // TODO: change to allow for multiple lights
     Color surface = Shading::phong_lighting(comps.object->material, comps.object,
-        light.get(), comps.point, comps.eye,
+        light.get(), comps.over_point, comps.eye, // TESTED CHANGING TO OVER_POINT
         comps.normal, shadowed);
     Color reflected = reflected_color(comps, recursion_depth);
     Color refracted = refracted_color(comps, recursion_depth);
@@ -70,7 +70,7 @@ bool World::is_shadowed(Point p) const {
     Ray r(p, dir_to_light);
     auto intersections = this->intersect_world(r);
     auto hit = intersections.hit();
-    return hit.has_value() && hit.value().t < distance;
+    return hit.has_value() && hit.value().t < distance; // && hit.value().t > 0;
 }
 
 Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth) const {

@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
     w.light = std::move(light_u);
 
     // Camera
-    Camera camera(200, 200, M_PI / 3);  // 100, 50, M_PI / 3);
+    Camera camera(300, 300, M_PI / 2);  // 100, 50, M_PI / 3);
     camera.transform = Transform::view_transform(
         Point(0, .01, -5), Point(0, 0, 0), Vector(0, 1, 0));
 

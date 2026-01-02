@@ -22,6 +22,19 @@ add_executable(raytracer
                 src/rendering/camera.cpp
 )
 
+add_executable(bench_renders
+                src/test_scenes.cpp
+                src/canvas.cpp
+                src/math/matrix.cpp
+                src/geometry/intersection.cpp
+                src/geometry/shapes.cpp
+                src/rendering/lighting.cpp
+                src/scene/world.cpp
+                src/scene/patterns.cpp
+                src/math/transformations.cpp
+                src/rendering/camera.cpp
+)
+
 find_package(Catch2 3 REQUIRED CONFIG)
 enable_testing()
 # These tests can use the Catch2-provided main
