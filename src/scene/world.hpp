@@ -21,9 +21,6 @@
 //     }
 // };
 
-// TODO: alternatively, change so can decide with color_at as entry point and decrement
-const int REFLECTION_DEPTH = 5;
-
 // Return object ptrs for testing
 struct DefaultWorld;
 
@@ -45,11 +42,11 @@ struct World {
     static DefaultWorld default_world();
 
     IntersectionRecord intersect_world(const Ray r) const;
-    Color shade_hit(PrecomputedIntersection comps, int recursion_depth = 0) const;
-    Color color_at(Ray r, int recursion_depth = 0) const;
+    Color shade_hit(PrecomputedIntersection comps, int remaining = 5) const;
+    Color color_at(Ray r, int remaining = 5) const;
     bool is_shadowed(Point p) const;
-    Color reflected_color(PrecomputedIntersection comps, int recursion_depth = 0) const;
-    Color refracted_color(PrecomputedIntersection comps, int recursion_depth = 0) const;
+    Color reflected_color(PrecomputedIntersection comps, int remaining = 5) const;
+    Color refracted_color(PrecomputedIntersection comps, int remaining = 5) const;
 
     // TODO: should intersect_world be a member of this? Not ray? cause
     // is_shadowed refers to point...

@@ -93,7 +93,7 @@ TEST_CASE("The reflected color at the maximum recursive depth", "[reflections][w
     Ray r(Point(0, 0, -3), Vector(0, -sqrt(2) / 2, sqrt(2) / 2));
     Intersection i(sqrt(2), shape);
     auto comps = PrecomputedIntersection::prepare_computations(i, r);
-    Color c = w.reflected_color(comps, REFLECTION_DEPTH);
+    Color c = w.reflected_color(comps, 0);
 
     REQUIRE(c == Color(0, 0, 0));
 }

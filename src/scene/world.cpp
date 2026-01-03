@@ -37,18 +37,18 @@ IntersectionRecord World::intersect_world(const Ray r) const {
     return xs;
 }
 
-Color World::shade_hit(PrecomputedIntersection comps, int recursion_depth) const {
+Color World::shade_hit(PrecomputedIntersection comps, int remaining) const {
     bool shadowed = is_shadowed(comps.over_point);
     // TODO: change to allow for multiple lights
     Color surface = Shading::phong_lighting(comps.object->material, comps.object,
         light.get(), comps.over_point, comps.eye, // TESTED CHANGING TO OVER_POINT
         comps.normal, shadowed);
-    Color reflected = reflected_color(comps, recursion_depth);
-    Color refracted = refracted_color(comps, recursion_depth);
-    return surface + reflected + refracted;
+    Color reflected = reflected_color(comps, remaining);
+    Color refracted = refracted_color(comps, remaining);
+    return surface + refracted + reflected;
 }
 
-Color World::color_at(Ray r, int recursion_depth) const {
+Color World::color_at(Ray r, int remaining) const {
     auto xs = this->intersect_world(r);
     auto hit = xs.hit();
     if (!hit.has_value()) {
@@ -59,7 +59,7 @@ Color World::color_at(Ray r, int recursion_depth) const {
     // ---- DEBUGGING: visualize which object was hit ----
     // if (hit->object->material.reflective == 1) return Color(1, 0, 0); // red = self-hit
     // else if (hit->object->material.reflective != 1) return Color(0, 1, 0);
-    return shade_hit(comps, recursion_depth);
+    return shade_hit(comps, remaining);
 }
 
 bool World::is_shadowed(Point p) const {
@@ -73,19 +73,20 @@ bool World::is_shadowed(Point p) const {
     return hit.has_value() && hit.value().t < distance; // && hit.value().t > 0;
 }
 
-Color World::reflected_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH - 1 || double_equal(comps.object->material.reflective, 0)) {
+Color World::reflected_color(PrecomputedIntersection comps, int remaining) const {
+    if (remaining <= 0 || double_equal(comps.object->material.reflective, 0)) {
         return Color(0, 0, 0);
     }
 
     Ray reflected_ray(comps.over_point, comps.reflect_dir);
-    return color_at(reflected_ray, recursion_depth + 1) * comps.object->material.reflective;
+    return color_at(reflected_ray, remaining - 1) * comps.object->material.reflective;
 }
 
-Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth) const {
-    if (recursion_depth >= REFLECTION_DEPTH - 1 || double_equal(comps.object->material.transparency, 0)) {
+Color World::refracted_color(PrecomputedIntersection comps, int remaining) const {
+    if (remaining <= 0 || double_equal(comps.object->material.transparency, 0)) {
+        return Color(0, 0, 0);
         if (double_equal(comps.object->material.transparency, 0)) {
-            return Color(0,0,0);
+            return Color(0, 0, 0);
         }
         return Color(0, 1, 0);
     }
@@ -98,12 +99,15 @@ Color World::refracted_color(PrecomputedIntersection comps, int recursion_depth)
     if (sin2_t > 1) { // Total internal reflection
         // assert(false);
         // std::cout << "Total Internal reflection!!!\n";
-        return Color(1, 0, 0);
+        return Color(0, 0, 0);
+        // return Color(1, 0, 0);
     }
+
+    // return Color(0,1,0);
 
     double cos_t = sqrt(1 - sin2_t);
     Vector refracted_dir = comps.normal * (n_ratio * cos_i - cos_t) - comps.eye * n_ratio;
     Ray refracted_ray(comps.under_point, refracted_dir.normalized());
 
-    return color_at(refracted_ray, recursion_depth + 1) * comps.object->material.transparency;
+    return color_at(refracted_ray, remaining - 1) * comps.object->material.transparency;
 }

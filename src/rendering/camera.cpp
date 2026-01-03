@@ -44,7 +44,7 @@ Canvas Camera::render(const World* w) const {
     for (size_t y = 0; y < vsize; y++) {
         for (size_t x = 0; x < hsize; x++) {
             Ray r = ray_for_pixel(x, y);
-            Color c = w->color_at(r, 0);
+            Color c = w->color_at(r); // Default to depth of 5 // TODO: why did it seg fault when set to 0?
             image.write_pixel(x, y, c);
         }
         // Progress bar update (per row)

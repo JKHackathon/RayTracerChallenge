@@ -63,7 +63,7 @@ TEST_CASE("The refracted color with an opaque surface", "[refraction]") {
     auto xs = IntersectionRecord(Intersection(4, s1), Intersection(6, s1));
     auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[0], r, &xs);
 
-    Color c = w.refracted_color(comps); // comps, 5 if change recursion_depth
+    Color c = w.refracted_color(comps, 5);
     REQUIRE(c == Color(0, 0, 0));
 }
 
@@ -75,7 +75,7 @@ TEST_CASE("The refracted color at the maximum recursive depth", "[refraction]") 
     auto xs = IntersectionRecord(Intersection(4, s1), Intersection(6, s1));
     auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[0], r, &xs);
 
-    Color c = w.refracted_color(comps, 5); // comps, 0 if change recursion_depth
+    Color c = w.refracted_color(comps, 0);
     REQUIRE(c == Color(0, 0, 0));
 }
 
@@ -87,7 +87,7 @@ TEST_CASE("The refracted color under total internal reflection", "[refraction]")
     auto xs = IntersectionRecord(Intersection(-sqrt(2) / 2, s1), Intersection(sqrt(2) / 2, s1));
     auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[1], r, &xs);
 
-    Color c = w.refracted_color(comps); // comps, 0 if change recursion_depth
+    Color c = w.refracted_color(comps, 5);
     REQUIRE(c == Color(0, 0, 0));
 }
 
@@ -104,7 +104,7 @@ TEST_CASE("The refracted color with a refracted ray", "[refraction]") {
     auto xs = IntersectionRecord(Intersection(-.9899, s1), Intersection(-.4899, s2), Intersection(.4899, s2), Intersection(.9899, s1));
     auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[2], r, &xs);
 
-    Color c = w.refracted_color(comps); // comps, 0 if change recursion_depth
+    Color c = w.refracted_color(comps, 5);
     REQUIRE(c == Color(0, 0.99888, .04725));
 }
 
@@ -128,6 +128,6 @@ TEST_CASE("shade_hit() with a transparent material", "[refraction][world]") {
     auto xs = IntersectionRecord(Intersection(sqrt(2), floor));
     auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[0], r, &xs);
 
-    Color c = w.shade_hit(comps); // comps, 0 if change recursion_depth
+    Color c = w.shade_hit(comps, 5);
     REQUIRE(c == Color(0.93642, 0.68642, 0.68642));
 }
