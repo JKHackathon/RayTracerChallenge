@@ -108,3 +108,22 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
 
     return comps;
 }
+
+double Refraction::schlick(PrecomputedIntersection comps) {
+    double cos = comps.eye.dot(comps.normal); //cos of angle between eye + normal
+
+    // TIR only if n1 > n2
+    if (comps.n1 > comps.n2) {
+        double n = comps.n1 / comps.n2;
+
+        double sin2_t = pow(n, 2) * (1 - pow(cos, 2));
+        if (sin2_t > 1.0) { // TIR - all light is reflected, none refracted
+            return 1.0;
+        }
+        cos = sqrt(1 - sin2_t); // n1>n2: use cos(theta_t) instead
+    }
+    // TODO: look at  “Reflections and Refractions in Ray Tracing,” by Bram de Greve
+
+    double r_theta = pow((comps.n1 - comps.n2) / (comps.n1 + comps.n2), 2);
+    return r_theta + (1 - r_theta) * pow(1 - cos, 5);
+}

@@ -31,65 +31,67 @@ int main(int argc, char* argv[]) {
     // Canvas canvas(width, height);
     World w;
 
-    auto floor_u = std::make_unique<Plane>();
-    Plane* floor = floor_u.get();
-    floor->material.color = Color(1, 0, 0);
-    floor->material.specular = 0;
-    floor->transform = Transform::translation(0, -.2, 0);
+    build_reflective_world(&w);
+
+    // auto floor_u = std::make_unique<Plane>();
+    // Plane* floor = floor_u.get();
+    // floor->material.color = Color(1, 0, 0);
+    // floor->material.specular = 0;
+    // floor->transform = Transform::translation(0, -.2, 0);
 
 
-    auto water_u = std::make_unique<Plane>();
-    Plane* water = water_u.get();
-    water->material.refractive_index = 1;
-    water->material.transparency = 1;
-    // water->material.reflective = .1;
-    // water->material.color = Color(0, 0, 0.1);
-    water->material.specular = 0;
-    water->material.diffuse = 0;
-    water->material.shininess = 0;
-    water->material.ambient = 0;
+    // // auto water_u = std::make_unique<Plane>();
+    // // Plane* water = water_u.get();
+    // // water->material.refractive_index = 1;
+    // // water->material.transparency = 1;
+    // // // water->material.reflective = .1;
+    // // // water->material.color = Color(0, 0, 0.1);
+    // // water->material.specular = 0;
+    // // water->material.diffuse = 0;
+    // // water->material.shininess = 0;
+    // // water->material.ambient = 0;
 
-    // build_reflective_world(&w);
-    // build_refractive_world(&w);
-    auto wall_u = std::make_unique<Plane>();
-    auto wall = wall_u.get();
-    wall->transform =
-        Transform::translation(0, 0, 15) * Transform::rotation_x(M_PI / 2);
-    CheckerPattern wall_pattern(Color(1, 1, 1), Color(0, 0, 0));
-    wall->material.pattern = &wall_pattern;
-    wall->material.specular = 0;
+    // // build_reflective_world(&w);
+    // // build_refractive_world(&w);
+    // auto wall_u = std::make_unique<Plane>();
+    // auto wall = wall_u.get();
+    // wall->transform =
+    //     Transform::translation(0, 0, 15) * Transform::rotation_x(M_PI / 2);
+    // CheckerPattern wall_pattern(Color(1, 1, 1), Color(0, 0, 0));
+    // wall->material.pattern = &wall_pattern;
+    // wall->material.specular = 0;
 
 
 
-    // Spheres
-    // auto sphere_u = std::make_unique<GlassSphere>();
-    // GlassSphere* sphere = sphere_u.get();
-    // sphere->transform = Transform::scaling(2, 2, 2);
-    // sphere->material.refractive_index = 2.5;
+    // // Spheres
+    // // auto sphere_u = std::make_unique<GlassSphere>();
+    // // GlassSphere* sphere = sphere_u.get();
+    // // sphere->transform = Transform::scaling(2, 2, 2);
+    // // sphere->material.refractive_index = 2.5;
 
-    // // Inner air sphere
-    // auto inner_sphere_u = std::make_unique<Sphere>();
-    // Sphere* inner_sphere = inner_sphere_u.get();
-    // inner_sphere->material.transparency = 1;
-    // inner_sphere->material.refractive_index = 1;
-    // inner_sphere->material.ambient = 0;
-    // inner_sphere->material.diffuse = 0;
-    // inner_sphere->material.specular = 0;
-    // inner_sphere->material.shininess = 0;
-    // inner_sphere->material.color = Color(1, 0, 0);
-    // inner_sphere->transform = Transform::scaling(1.8, 1.8, 1.8);
+    // // // Inner air sphere
+    // // auto inner_sphere_u = std::make_unique<Sphere>();
+    // // Sphere* inner_sphere = inner_sphere_u.get();
+    // // inner_sphere->material.transparency = 1;
+    // // inner_sphere->material.refractive_index = 1;
+    // // inner_sphere->material.ambient = 0;
+    // // inner_sphere->material.diffuse = 0;
+    // // inner_sphere->material.specular = 0;
+    // // inner_sphere->material.shininess = 0;
+    // // inner_sphere->material.color = Color(1, 0, 0);
+    // // inner_sphere->transform = Transform::scaling(1.8, 1.8, 1.8);
 
-    // Light
-    auto light_u =
-        std::make_unique<PointLight>(Point(-10, 10, -10), Color(1, 1, 1));
+    // // Light
+    // auto light_u =
+    //     std::make_unique<PointLight>(Point(-10, 10, -10), Color(1, 1, 1));
 
-    // World
-    w.objects.emplace(wall, std::move(wall_u));
-    w.objects.emplace(floor, std::move(floor_u));
-    w.objects.emplace(water, std::move(water_u));
-    // w.objects.emplace(sphere, std::move(sphere_u));
-    // w.objects.emplace(inner_sphere, std::move(inner_sphere_u));
-    w.light = std::move(light_u);
+    // // World
+    // w.objects.emplace(wall, std::move(wall_u));
+    // w.objects.emplace(floor, std::move(floor_u));
+    // // w.objects.emplace(water, std::move(water_u));
+    // // w.objects.emplace(sphere, std::move(sphere_u));
+    // // w.objects.emplace(inner_sphere, std::move(inner_sphere_u));
+    // w.light = std::move(light_u);
 
     // Camera
     Camera camera(300, 300, M_PI / 2);  // 100, 50, M_PI / 3);
@@ -141,12 +143,13 @@ void build_reflective_world(World* w) {
     auto back_wall = back_wall_u.get();
     back_wall->transform =
         Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
-    back_wall->material.color = Color(1, 1, 1);
+    back_wall->material.color = Color(0, 0, 1);
+    back_wall->material.specular = 0;
 
     // Spheres
     auto middle_s_u = std::make_unique<Sphere>();
     Sphere* middle_s = middle_s_u.get();
-    middle_s->transform = Transform::translation(-.5, 1, .5);
+    middle_s->transform = Transform::translation(-.5, 1, .5) * Transform::scaling(1,1,2);
     middle_s->material.color = Color(1, 0.2, 1);
     middle_s->material.diffuse = .7;
     middle_s->material.specular = .3;

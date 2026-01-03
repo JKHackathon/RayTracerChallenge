@@ -45,6 +45,12 @@ Color World::shade_hit(PrecomputedIntersection comps, int remaining) const {
         comps.normal, shadowed);
     Color reflected = reflected_color(comps, remaining);
     Color refracted = refracted_color(comps, remaining);
+
+    if (comps.object->material.reflective > 0 && comps.object->material.transparency > 0) {
+        double reflectance = Refraction::schlick(comps);
+        return surface + reflected * reflectance + refracted * (1 - reflectance);
+    }
+
     return surface + refracted + reflected;
 }
 

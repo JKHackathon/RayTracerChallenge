@@ -64,3 +64,8 @@ struct PrecomputedIntersection {
 
     static PrecomputedIntersection prepare_computations(Intersection i, Ray r, IntersectionRecord* xs = nullptr);
 };
+
+// TODO: rename
+namespace Refraction {
+    double schlick(PrecomputedIntersection comps);
+}

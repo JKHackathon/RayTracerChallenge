@@ -131,3 +131,55 @@ TEST_CASE("shade_hit() with a transparent material", "[refraction][world]") {
     Color c = w.shade_hit(comps, 5);
     REQUIRE(c == Color(0.93642, 0.68642, 0.68642));
 }
+
+TEST_CASE("The Schlick approximation under total internal reflection", "[refraction]") {
+    GlassSphere shape;
+    Ray r(Point(0, 0, sqrt(2 / 2)), Vector(0, 1, 0));
+    auto xs = IntersectionRecord(Intersection(-sqrt(2) / 2, &shape), Intersection(sqrt(2) / 2, &shape));
+    auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[1], r, &xs);
+    float reflectance = Refraction::schlick(comps);
+    REQUIRE(double_equal(reflectance, 1));
+}
+
+TEST_CASE("The Schlick approximation with a perpendicular viewing angle", "[refraction]") {
+    GlassSphere shape;
+    Ray r(Point(0, 0, 0), Vector(0, 1, 0));
+    auto xs = IntersectionRecord(Intersection(-1, &shape), Intersection(1, &shape));
+    auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[1], r, &xs);
+    float reflectance = Refraction::schlick(comps);
+    REQUIRE(double_equal(reflectance, .04));
+}
+
+TEST_CASE("The Schlick approximation with small angle and n2 > n1", "[refraction]") {
+    GlassSphere shape;
+    Ray r(Point(0, 0.99, -2), Vector(0, 0, 1));
+    auto xs = IntersectionRecord(Intersection(1.8589, &shape));
+    auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[0], r, &xs);
+    float reflectance = Refraction::schlick(comps);
+    REQUIRE(double_equal(reflectance, .48873));
+}
+
+TEST_CASE("shade_hit() with a reflective, transparent material", "[refraction][shading][world]") {
+    auto [w, s1, s2] = World::default_world();
+    Ray r(Point(0, 0, -3), Vector(0, -sqrt(2) / 2, sqrt(2) / 2));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::translation(0, -1, 0);
+    floor->material.reflective = .5;
+    floor->material.transparency = .5;
+    floor->material.refractive_index = 1.5;
+    w.objects.emplace(floor, std::move(floor_u));
+
+    auto ball_u = std::make_unique<Sphere>();
+    Sphere* ball = ball_u.get();
+    ball->material.color = Color(1, 0, 0);
+    ball->material.ambient = .5;
+    ball->transform = Transform::translation(0, -3.5, -.5);
+    w.objects.emplace(ball, std::move(ball_u));
+
+    auto xs = IntersectionRecord(Intersection(sqrt(2), floor));
+    auto comps = PrecomputedIntersection::prepare_computations(xs.intersections[0], r, &xs);
+    Color c = w.shade_hit(comps, 5);
+    REQUIRE(c == Color(0.93391, 0.69643, 0.69243));
+}

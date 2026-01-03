@@ -14,10 +14,10 @@ Canvas glass_air_bubble_exact_scene();
 
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = glass_air_bubble_exact_scene(); //reflection_and_refraction_scene(); //shadow_puppets_scene(); //
+    Canvas canvas = reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("glass_hollow_noreflection-1.ppm");
+    std::ofstream outputFile("output.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
@@ -199,7 +199,7 @@ Canvas reflection_and_refraction_scene() {
 
     Material wall_material;
     StripePattern wall_pattern(Color(.45, .45, .45), Color(.55, .55, .55));
-    wall_pattern.transform = Transform::rotation_y((1.5708)) * Transform::scaling(.25, .25, .25);
+    wall_pattern.transform = Transform::rotation_y(M_PI / 2) * Transform::scaling(.25, .25, .25);
     wall_material.ambient = 0;
     wall_material.diffuse = .4;
     wall_material.specular = 0;
@@ -226,22 +226,22 @@ Canvas reflection_and_refraction_scene() {
     auto west_wall_u = std::make_unique<Plane>();
     Plane* west_wall = west_wall_u.get();
     west_wall->transform = Transform::translation(-5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
-    west_wall->material.pattern = &wall_pattern;
+    west_wall->material = wall_material;
 
     auto east_wall_u = std::make_unique<Plane>();
     Plane* east_wall = east_wall_u.get();
     east_wall->transform = Transform::translation(5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
-    east_wall->material.pattern = &wall_pattern;
+    east_wall->material = wall_material;
 
     auto north_wall_u = std::make_unique<Plane>();
     Plane* north_wall = north_wall_u.get();
     north_wall->transform = Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
-    north_wall->material.pattern = &wall_pattern;
+    north_wall->material = wall_material;
 
     auto south_wall_u = std::make_unique<Plane>();
     Plane* south_wall = south_wall_u.get();
     south_wall->transform = Transform::translation(0, 0, -5) * Transform::rotation_x(M_PI / 2);
-    south_wall->material.pattern = &wall_pattern;
+    south_wall->material = wall_material;
 
     // Background balls
     auto b_sphere_1_u = std::make_unique<Sphere>();
@@ -274,7 +274,7 @@ Canvas reflection_and_refraction_scene() {
     red_sphere->transform = Transform::translation(-.6, 1, .6);
     red_sphere->material.color = Color(1, .3, .2);
     red_sphere->material.specular = .4;
-    red_sphere->material.shininess = 50;
+    red_sphere->material.shininess = 5;
 
     auto blue_sphere_u = std::make_unique<Sphere>();
     Sphere* blue_sphere = blue_sphere_u.get();
@@ -306,6 +306,7 @@ Canvas reflection_and_refraction_scene() {
     w.objects.emplace(ceiling, std::move(ceiling_u));
     w.objects.emplace(north_wall, std::move(north_wall_u));
     w.objects.emplace(west_wall, std::move(west_wall_u));
+    w.objects.emplace(east_wall, std::move(east_wall_u));
     w.objects.emplace(south_wall, std::move(south_wall_u));
     w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
     w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
