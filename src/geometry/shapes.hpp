@@ -69,9 +69,6 @@ private:
         return local_p - origin;
     }
 
-    // TODO: abstract to any objects in scene
-    // TO UNDERSTAND: why do I want my intersect to check things behind the ray?
-    // For reflections!!! + chapter 16
     // TODO: look into math of it
     IntersectionRecord local_intersect(const Ray local_r) const override;
 };
@@ -97,4 +94,11 @@ private:
         double t = -local_r.origin.y / local_r.dir.y;
         return Intersection(t, this);
     }
+};
+
+struct Cube : public Shape {
+private:
+    Vector local_normal_at(const Point local_p) const override;
+    IntersectionRecord local_intersect(const Ray local_r) const override;
+    std::pair<double, double> check_axis(double origin, double direction) const;
 };

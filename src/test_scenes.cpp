@@ -7,20 +7,203 @@
 #include "rendering/camera.hpp"
 #include "rendering/lighting.hpp"
 
-Canvas reflection_and_refraction_scene();
 Canvas shadow_puppets_scene();
+
+Canvas reflection_and_refraction_scene();
 Canvas glass_air_bubble_forum_scene();
 Canvas glass_air_bubble_exact_scene();
 
+Canvas glass_air_cube_scene();
+Canvas reflection_and_refraction_cube_scene();
+
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
+    Canvas canvas = glass_air_cube_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
     std::ofstream outputFile("output.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
+}
+
+Canvas reflection_and_refraction_cube_scene() {
+    Camera camera(400, 200, 1.152);
+    camera.transform = Transform::view_transform(
+        Point(-2.6, 1.5, -3.9), Point(-.6, 1, -.8), Vector(0, 1, 0));
+
+    Material wall_material;
+    StripePattern wall_pattern(Color(.45, .45, .45), Color(.55, .55, .55));
+    wall_pattern.transform = Transform::rotation_y(M_PI / 2) * Transform::scaling(.25, .25, .25);
+    wall_material.ambient = 0;
+    wall_material.diffuse = .4;
+    wall_material.specular = 0;
+    wall_material.reflective = .3;
+    wall_material.pattern = &wall_pattern;
+
+    auto light_u = std::make_unique<PointLight>(Point(-4.9, 4.9, -1), Color(1, 1, 1));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::rotation_y(M_PI);
+    CheckerPattern floor_pattern(Color(.35, .35, .35), Color(.65, .65, .65));
+    floor->material.pattern = &floor_pattern;
+    floor->material.specular = 0;
+    floor->material.reflective = .4;
+
+    auto ceiling_u = std::make_unique<Plane>();
+    Plane* ceiling = ceiling_u.get();
+    ceiling->transform = Transform::translation(0, 5, 0);
+    ceiling->material.color = Color(.8, .8, .8);
+    ceiling->material.ambient = .3;
+    ceiling->material.specular = 0;
+
+    auto west_wall_u = std::make_unique<Plane>();
+    Plane* west_wall = west_wall_u.get();
+    west_wall->transform = Transform::translation(-5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
+    west_wall->material = wall_material;
+
+    auto east_wall_u = std::make_unique<Plane>();
+    Plane* east_wall = east_wall_u.get();
+    east_wall->transform = Transform::translation(5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
+    east_wall->material = wall_material;
+
+    auto north_wall_u = std::make_unique<Plane>();
+    Plane* north_wall = north_wall_u.get();
+    north_wall->transform = Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
+    north_wall->material = wall_material;
+
+    auto south_wall_u = std::make_unique<Plane>();
+    Plane* south_wall = south_wall_u.get();
+    south_wall->transform = Transform::translation(0, 0, -5) * Transform::rotation_x(M_PI / 2);
+    south_wall->material = wall_material;
+
+    // Background balls
+    auto b_sphere_1_u = std::make_unique<Cube>();
+    Cube* b_sphere_1 = b_sphere_1_u.get();
+    b_sphere_1->transform = Transform::translation(4.6, .4, 1) * Transform::scaling(.4, .4, .4);
+    b_sphere_1->material.color = Color(.8, .5, .3);
+    b_sphere_1->material.shininess = 50;
+
+    auto b_sphere_2_u = std::make_unique<Cube>();
+    Cube* b_sphere_2 = b_sphere_2_u.get();
+    b_sphere_2->transform = Transform::translation(4.7, .3, .4) * Transform::scaling(.3, .3, .3);
+    b_sphere_2->material.color = Color(.9, .4, .5);
+    b_sphere_2->material.shininess = 50;
+
+    auto b_sphere_3_u = std::make_unique<Cube>();
+    Cube* b_sphere_3 = b_sphere_3_u.get();
+    b_sphere_3->transform = Transform::translation(-1, .5, 4.5) * Transform::scaling(.5, .5, .5);
+    b_sphere_3->material.color = Color(.4, .9, .6);
+    b_sphere_3->material.shininess = 50;
+
+    auto b_sphere_4_u = std::make_unique<Cube>();
+    Cube* b_sphere_4 = b_sphere_4_u.get();
+    b_sphere_4->transform = Transform::translation(-1.7, .3, 4.7) * Transform::scaling(.3, .3, .3);
+    b_sphere_4->material.color = Color(.4, .6, .9);
+    b_sphere_4->material.shininess = 50;
+
+    // Foreground balls
+    auto red_sphere_u = std::make_unique<Cube>();
+    Cube* red_sphere = red_sphere_u.get();
+    red_sphere->transform = Transform::translation(-.6, 1, .6);
+    red_sphere->material.color = Color(1, .3, .2);
+    red_sphere->material.specular = .4;
+    red_sphere->material.shininess = 5;
+
+    auto blue_sphere_u = std::make_unique<Cube>();
+    Cube* blue_sphere = blue_sphere_u.get();
+    blue_sphere->transform = Transform::translation(.6, .7, -.6) * Transform::scaling(.7, .7, .7);
+    blue_sphere->material.color = Color(0, 0, .2);
+    blue_sphere->material.ambient = 0;
+    blue_sphere->material.diffuse = .4;
+    blue_sphere->material.specular = .9;
+    red_sphere->material.shininess = 300;
+    blue_sphere->material.reflective = .9;
+    blue_sphere->material.transparency = .9;
+    blue_sphere->material.refractive_index = 1.5;
+
+    auto green_sphere_u = std::make_unique<Cube>();
+    Cube* green_sphere = green_sphere_u.get();
+    green_sphere->transform = Transform::translation(-.7, .5, -.8) * Transform::scaling(.5, .5, .5);
+    green_sphere->material.color = Color(0, .2, 0);
+    green_sphere->material.ambient = 0;
+    green_sphere->material.diffuse = .4;
+    green_sphere->material.specular = .9;
+    green_sphere->material.shininess = 300;
+    green_sphere->material.reflective = .9;
+    green_sphere->material.transparency = .9;
+    green_sphere->material.refractive_index = 1.5;
+
+    World w;
+
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(ceiling, std::move(ceiling_u));
+    w.objects.emplace(north_wall, std::move(north_wall_u));
+    w.objects.emplace(west_wall, std::move(west_wall_u));
+    w.objects.emplace(east_wall, std::move(east_wall_u));
+    w.objects.emplace(south_wall, std::move(south_wall_u));
+    w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
+    w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
+    w.objects.emplace(b_sphere_3, std::move(b_sphere_3_u));
+    w.objects.emplace(b_sphere_4, std::move(b_sphere_4_u));
+    w.objects.emplace(red_sphere, std::move(red_sphere_u));
+    w.objects.emplace(blue_sphere, std::move(blue_sphere_u));
+    w.objects.emplace(green_sphere, std::move(green_sphere_u));
+    w.light = std::move(light_u);
+
+    return camera.render(&w);
+}
+
+Canvas glass_air_cube_scene() {
+    Camera camera(300, 300, .45);
+    camera.transform = Transform::view_transform(
+        Point(1, 1, -5), Point(0, 0, 0), Vector(0, 1, 0));
+        // Point(0, 0, -5), Point(0, 0, 0), Vector(0, 1, 0));
+
+    auto light_u = std::make_unique<PointLight>(Point(2, 10, -5), Color(.9, .9, .9));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::translation(0, 0, 10) * Transform::rotation_x(M_PI / 2);
+    CheckerPattern floor_pattern(Color(.15, .15, .15), Color(.85, .85, .85));
+    floor->material.pattern = &floor_pattern;
+    floor->material.ambient = .8;
+    floor->material.diffuse = .2;
+    floor->material.specular = 0;
+
+    auto glass_sphere_u = std::make_unique<Cube>();
+    Cube* glass_sphere = glass_sphere_u.get();
+    glass_sphere->transform = Transform::scaling(.5, .5, .5);
+    glass_sphere->material.color = Color(1, 0, 0);
+    glass_sphere->material.ambient = 0;
+    glass_sphere->material.diffuse = 0;
+    glass_sphere->material.specular = .9;
+    glass_sphere->material.shininess = 300;
+    glass_sphere->material.reflective = .9;
+    glass_sphere->material.transparency = .9;
+    glass_sphere->material.refractive_index = 1.5;
+
+    auto inner_air_sphere_u = std::make_unique<Cube>();
+    Cube* inner_air_sphere = inner_air_sphere_u.get();
+    inner_air_sphere->transform = Transform::scaling(.25, .25, .25);
+    inner_air_sphere->material.ambient = 0;
+    inner_air_sphere->material.diffuse = 0;
+    inner_air_sphere->material.specular = 0.9;
+    inner_air_sphere->material.shininess = 300;
+    inner_air_sphere->material.reflective = .9;
+    inner_air_sphere->material.transparency = .9;
+    inner_air_sphere->material.refractive_index = 1.0000034;
+    inner_air_sphere->material.color = Color(1, 1, 1);
+
+    World w;
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(glass_sphere, std::move(glass_sphere_u));
+    w.objects.emplace(inner_air_sphere, std::move(inner_air_sphere_u));
+    std::cout << "Hollow glass cube\n";
+    w.light = std::move(light_u);
+
+    return camera.render(&w);
 }
 
 Canvas glass_air_bubble_exact_scene() {

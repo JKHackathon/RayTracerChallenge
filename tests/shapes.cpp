@@ -100,3 +100,111 @@ TEST_CASE("Ray intersecting a plane from below", "[shapes][planes]") {
     REQUIRE(double_equal(xs.intersections[0].t, 1));
     REQUIRE(xs.intersections[0].object == &p);
 }
+
+TEST_CASE("A ray intersects a cube", "[shapes][cubes]") {
+    Cube c;
+    Ray x_pos(Point(5, 0.5, 0), Vector(-1, 0, 0));
+    auto xs = c.intersect(x_pos);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+
+    Ray x_neg(Point(-5, 0.5, 0), Vector(1, 0, 0));
+    xs = c.intersect(x_neg);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+    Ray y_pos(Point(0.5, 5, 0), Vector(0, -1, 0));
+    xs = c.intersect(y_pos);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+
+    Ray y_neg(Point(0.5, -5, 0), Vector(0, 1, 0));
+    xs = c.intersect(y_neg);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+    Ray z_pos(Point(0.5, 0, 5), Vector(0, 0, -1));
+    xs = c.intersect(y_pos);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+    Ray z_neg(Point(0.5, 0, -5), Vector(0, 0, 1));
+    xs = c.intersect(y_neg);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+    Ray inside(Point(0, 0.5, 0), Vector(0, 0, 1));
+    xs = c.intersect(inside);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, -1));
+    REQUIRE(double_equal(xs.intersections[1].t, 1));
+}
+
+TEST_CASE("A ray misses a cube", "[shapes][cubes]") {
+    Cube c;
+    Ray r(Point(-2, 0, 0), Vector(0.2673, 0.5345, 0.8018));
+    auto xs = c.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, -2, 0), Vector(0.8018, 0.2673, 0.5345));
+    xs = c.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 0, -2), Vector(0.5345, 0.8018, 0.2673));
+    xs = c.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(2, 0, 2), Vector(0, 0, -1));
+    xs = c.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 2, 2), Vector(0, -1, 0));
+    xs = c.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(2, 2, 0), Vector(-1, 0, 0));
+    xs = c.intersect(r);
+    REQUIRE(xs.count == 0);
+}
+TEST_CASE("The normal on the surface of a cube", "[shapes][cubes]") {
+    Cube c;
+    Point p(Point(1, 0.5, -0.8));
+    Vector normal = c.normal_at(p);
+    REQUIRE(normal == Vector(1, 0, 0));
+
+    p = Point(Point(-1, -0.2, 0.9));
+normal = c.normal_at(p);
+    REQUIRE(normal == Vector(-1, 0, 0));
+
+    p = Point(Point(-0.4, 1, -0.1));
+normal = c.normal_at(p);
+    REQUIRE(normal == Vector(0, 1, 0));
+
+    p = Point(Point(0.3, -1, -0.7));
+normal = c.normal_at(p);
+    REQUIRE(normal == Vector(0, -1, 0));
+
+    p = Point(Point(-0.6, 0.3, 1));
+normal = c.normal_at(p);
+    REQUIRE(normal == Vector(0, 0, 1));
+
+    p = Point(Point(0.4, 0.4, -1));
+normal = c.normal_at(p);
+    REQUIRE(normal == Vector(0, 0, -1));
+
+    p = Point(Point(1, 1, 1));
+    normal = c.normal_at(p);
+    REQUIRE(normal == Vector(1, 0, 0));
+
+    p = Point(Point(-1, -1, -1));
+    normal = c.normal_at(p);
+    REQUIRE(normal == Vector(-1, 0, 0));
+}
