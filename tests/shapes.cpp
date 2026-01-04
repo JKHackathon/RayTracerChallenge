@@ -181,23 +181,23 @@ TEST_CASE("The normal on the surface of a cube", "[shapes][cubes]") {
     REQUIRE(normal == Vector(1, 0, 0));
 
     p = Point(Point(-1, -0.2, 0.9));
-normal = c.normal_at(p);
+    normal = c.normal_at(p);
     REQUIRE(normal == Vector(-1, 0, 0));
 
     p = Point(Point(-0.4, 1, -0.1));
-normal = c.normal_at(p);
+    normal = c.normal_at(p);
     REQUIRE(normal == Vector(0, 1, 0));
 
     p = Point(Point(0.3, -1, -0.7));
-normal = c.normal_at(p);
+    normal = c.normal_at(p);
     REQUIRE(normal == Vector(0, -1, 0));
 
     p = Point(Point(-0.6, 0.3, 1));
-normal = c.normal_at(p);
+    normal = c.normal_at(p);
     REQUIRE(normal == Vector(0, 0, 1));
 
     p = Point(Point(0.4, 0.4, -1));
-normal = c.normal_at(p);
+    normal = c.normal_at(p);
     REQUIRE(normal == Vector(0, 0, -1));
 
     p = Point(Point(1, 1, 1));
@@ -207,4 +207,148 @@ normal = c.normal_at(p);
     p = Point(Point(-1, -1, -1));
     normal = c.normal_at(p);
     REQUIRE(normal == Vector(-1, 0, 0));
+}
+
+TEST_CASE("A ray misses a cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    Ray r(Point(1, 0, 0), Vector(0, 1, 0));
+    auto xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 0, 0), Vector(0, 1, 0));
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 0, -5), Vector(1, 1, 1).normalized());
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+}
+
+TEST_CASE("A ray strikes a cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    Ray r(Point(1, 0, -5), Vector(0, 0, 1));
+    auto xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 5));
+    REQUIRE(double_equal(xs.intersections[1].t, 5));
+
+    r = Ray(Point(0, 0, -5), Vector(0, 0, 1));
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4));
+    REQUIRE(double_equal(xs.intersections[1].t, 6));
+
+    r = Ray(Point(0.5, 0, -5), Vector(0.1, 1, 1));
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 6.80798));
+    REQUIRE(double_equal(xs.intersections[1].t, 7.08872));
+}
+
+TEST_CASE("Normal vector on a cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    Vector normal = cyl.normal_at(Point(1, 0, 0));
+    REQUIRE(normal == Vector(1, 0, 0));
+
+    normal = cyl.normal_at(Point(0, 5, -1));
+    REQUIRE(normal == Vector(0, 0, -1));
+
+    normal = cyl.normal_at(Point(0, -2, 1));
+    REQUIRE(normal == Vector(0, 0, 1));
+
+    normal = cyl.normal_at(Point(-1, 1, 0));
+    REQUIRE(normal == Vector(-1, 0, 0));
+}
+
+TEST_CASE("The default minimum and maximum for a cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    cyl.minimum = std::numeric_limits<double>::lowest();
+    cyl.maximum = std::numeric_limits<double>::max();
+}
+
+TEST_CASE("Intersecting a constrained cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    cyl.minimum = 1;
+    cyl.maximum = 2;
+
+    Ray r(Point(0, 1.5, 0), Vector(0.1, 1, 0)); // diagonal inside, going through hole in top
+    auto xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 3, -5), Vector(0, 0, 1)); // above cylinder
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 0, -5), Vector(0, 0, 1)); // below cylinder
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 2, -5), Vector(0, 0, 1)); // at max
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 1, -5), Vector(0, 0, 1)); // at min
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 1.5, -2), Vector(0, 0, 1)); //through middle
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+}
+
+TEST_CASE("The default closed value for a cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    REQUIRE(!cyl.closed);
+}
+
+TEST_CASE("Intersecting the caps of a closed cylinder", "[shapes][cylinders]") {
+    Cylinder cyl;
+    cyl.minimum = 1;
+    cyl.maximum = 2;
+    cyl.closed = true;
+
+    Ray r(Point(0, 3, 0), Vector(0, -1, 0)); // intersect both caps
+    auto xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+
+    r = Ray(Point(0, 3, -2), Vector(0, -1, 2)); // intersact cap + side
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+
+    r = Ray(Point(0, 4, -2), Vector(0, -1, 1)); // intersect cap + corner
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+
+    r = Ray(Point(0, 0, -2), Vector(0, 1, 2)); // intersact cap + side
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+
+    r = Ray(Point(0, -1, -2), Vector(0, 1, 1)); // intersect cap + corner
+    xs = cyl.intersect(r);
+    REQUIRE(xs.count == 2);
+}
+
+TEST_CASE("The normal vector on a cylinder's end caps", "[shapes][cylinders]") {
+    Cylinder cyl;
+    cyl.minimum = 1;
+    cyl.maximum = 2;
+    cyl.closed = true;
+
+    Vector n = cyl.normal_at(Point(0, 1, 0));
+    REQUIRE(n == Vector(0, -1, 0));
+
+    n = cyl.normal_at(Point(0.5, 1, 0));
+    REQUIRE(n == Vector(0, -1, 0));
+
+    n = cyl.normal_at(Point(0, 1, 0.5));
+    REQUIRE(n == Vector(0, -1, 0));
+
+    n = cyl.normal_at(Point(0, 2, 0));
+    REQUIRE(n == Vector(0, 1, 0));
+
+    n = cyl.normal_at(Point(0.5, 2, 0));
+    REQUIRE(n == Vector(0, 1, 0));
+
+    n = cyl.normal_at(Point(0, 2, 0.5));
+    REQUIRE(n == Vector(0, 1, 0));
 }

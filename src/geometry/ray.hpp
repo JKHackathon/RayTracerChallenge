@@ -13,7 +13,8 @@ struct Ray {
     // TODO: unclear if within textbook structure
     // std::vector<Intersection> intersections;
 
-    Ray(Point origin, Vector dir) : origin(origin), dir(dir) {}
+    // TODO: i typically expect dir to be normalized, but maybe there are exceptions
+    Ray(Point origin, Vector dir) : origin(origin), dir(dir.normalized()) {}
 
     Point position(double t) { return origin + dir * t; }
 
