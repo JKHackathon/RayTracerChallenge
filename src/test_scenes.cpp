@@ -18,15 +18,163 @@ Canvas reflection_and_refraction_cube_scene();
 
 Canvas reflection_and_refraction_cylinder_scene();
 
+Canvas reflection_and_refraction_cone_scene();
+
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = reflection_and_refraction_cylinder_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
+    Canvas canvas = reflection_and_refraction_cone_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("output.ppm");
+    std::ofstream outputFile("cones.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
+}
+
+Canvas reflection_and_refraction_cone_scene() {
+    Camera camera(400, 200, 1.152);
+    camera.transform = Transform::view_transform(
+        Point(-2.6, 1.5, -3.9), Point(-.6, 1, -.8), Vector(0, 1, 0));
+
+    Material wall_material;
+    StripePattern wall_pattern(Color(.45, .45, .45), Color(.55, .55, .55));
+    wall_pattern.transform = Transform::rotation_y(M_PI / 2) * Transform::scaling(.25, .25, .25);
+    wall_material.ambient = 0;
+    wall_material.diffuse = .4;
+    wall_material.specular = 0;
+    wall_material.reflective = .3;
+    wall_material.pattern = &wall_pattern;
+
+    auto light_u = std::make_unique<PointLight>(Point(-4.9, 4.9, -1), Color(1, 1, 1));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::rotation_y(M_PI);
+    CheckerPattern floor_pattern(Color(.35, .35, .35), Color(.65, .65, .65));
+    floor->material.pattern = &floor_pattern;
+    floor->material.specular = 0;
+    floor->material.reflective = .4;
+
+    auto ceiling_u = std::make_unique<Plane>();
+    Plane* ceiling = ceiling_u.get();
+    ceiling->transform = Transform::translation(0, 5, 0);
+    ceiling->material.color = Color(.8, .8, .8);
+    ceiling->material.ambient = .3;
+    ceiling->material.specular = 0;
+
+    auto west_wall_u = std::make_unique<Plane>();
+    Plane* west_wall = west_wall_u.get();
+    west_wall->transform = Transform::translation(-5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
+    west_wall->material = wall_material;
+
+    auto east_wall_u = std::make_unique<Plane>();
+    Plane* east_wall = east_wall_u.get();
+    east_wall->transform = Transform::translation(5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
+    east_wall->material = wall_material;
+
+    auto north_wall_u = std::make_unique<Plane>();
+    Plane* north_wall = north_wall_u.get();
+    north_wall->transform = Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
+    north_wall->material = wall_material;
+
+    auto south_wall_u = std::make_unique<Plane>();
+    Plane* south_wall = south_wall_u.get();
+    south_wall->transform = Transform::translation(0, 0, -5) * Transform::rotation_x(M_PI / 2);
+    south_wall->material = wall_material;
+
+    // Background balls
+    auto b_sphere_1_u = std::make_unique<Cone>();
+    Cone* b_sphere_1 = b_sphere_1_u.get();
+    b_sphere_1->transform = Transform::translation(4.6, .4, 1) * Transform::scaling(.4, .4, .4);
+    b_sphere_1->material.color = Color(.8, .5, .3);
+    b_sphere_1->material.shininess = 50;
+    // b_sphere_1->closed = true;
+    // b_sphere_1->minimum = -.5;
+    // b_sphere_1->maximum = .5;
+
+    auto b_sphere_2_u = std::make_unique<Cone>();
+    Cone* b_sphere_2 = b_sphere_2_u.get();
+    b_sphere_2->transform = Transform::translation(4.7, .3, .4) * Transform::scaling(.3, .3, .3);
+    b_sphere_2->material.color = Color(.9, .4, .5);
+    b_sphere_2->material.shininess = 50;
+    b_sphere_2->minimum = -.5;
+    b_sphere_2->maximum = .5;
+
+    auto b_sphere_3_u = std::make_unique<Cone>();
+    Cone* b_sphere_3 = b_sphere_3_u.get();
+    b_sphere_3->transform = Transform::translation(-1, .5, 4.5) * Transform::scaling(.5, .5, .5);
+    b_sphere_3->material.color = Color(.4, .9, .6);
+    b_sphere_3->material.shininess = 50;
+    b_sphere_3->closed = true;
+    b_sphere_3->minimum = 0;
+    b_sphere_3->maximum = 1;
+
+    auto b_sphere_4_u = std::make_unique<Cone>();
+    Cone* b_sphere_4 = b_sphere_4_u.get();
+    b_sphere_4->transform = Transform::translation(-1.7, .3, 4.7) * Transform::scaling(.3, .3, .3);
+    b_sphere_4->material.color = Color(.4, .6, .9);
+    b_sphere_4->material.shininess = 50;
+    b_sphere_4->minimum = -.5;
+    b_sphere_4->maximum = .5;
+
+    // Foreground balls
+    auto red_sphere_u = std::make_unique<Cone>();
+    Cone* red_sphere = red_sphere_u.get();
+    red_sphere->transform = Transform::translation(-.6, 1, .6);
+    red_sphere->material.color = Color(1, .3, .2);
+    red_sphere->material.specular = .4;
+    red_sphere->material.shininess = 5;
+    red_sphere->maximum = 1;
+    red_sphere->minimum = -.5;
+    red_sphere->closed = true;
+
+    auto blue_sphere_u = std::make_unique<Cone>();
+    Cone* blue_sphere = blue_sphere_u.get();
+    blue_sphere->transform = Transform::translation(.6, .7, -.6) * Transform::scaling(.7, .7, .7);
+    blue_sphere->material.color = Color(0, 0, .2);
+    blue_sphere->material.ambient = 0;
+    blue_sphere->material.diffuse = .4;
+    blue_sphere->material.specular = .9;
+    red_sphere->material.shininess = 300;
+    blue_sphere->material.reflective = .9;
+    blue_sphere->material.transparency = .9;
+    blue_sphere->material.refractive_index = 1.5;
+    blue_sphere->closed = true;
+    blue_sphere->maximum = .5;
+    blue_sphere->minimum = -.5;
+
+    auto green_sphere_u = std::make_unique<Cone>();
+    Cone* green_sphere = green_sphere_u.get();
+    green_sphere->transform = Transform::translation(-.7, .5, -.8) * Transform::scaling(.5, .5, .5);
+    green_sphere->material.color = Color(0, .2, 0);
+    green_sphere->material.ambient = 0;
+    green_sphere->material.diffuse = .4;
+    green_sphere->material.specular = .9;
+    green_sphere->material.shininess = 300;
+    green_sphere->material.reflective = .9;
+    green_sphere->material.transparency = .9;
+    green_sphere->material.refractive_index = 1.5;
+    green_sphere->minimum = -.5;
+    green_sphere->maximum = .5;
+
+    World w;
+
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(ceiling, std::move(ceiling_u));
+    w.objects.emplace(north_wall, std::move(north_wall_u));
+    w.objects.emplace(west_wall, std::move(west_wall_u));
+    w.objects.emplace(east_wall, std::move(east_wall_u));
+    w.objects.emplace(south_wall, std::move(south_wall_u));
+    w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
+    w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
+    w.objects.emplace(b_sphere_3, std::move(b_sphere_3_u));
+    w.objects.emplace(b_sphere_4, std::move(b_sphere_4_u));
+    w.objects.emplace(red_sphere, std::move(red_sphere_u));
+    w.objects.emplace(blue_sphere, std::move(blue_sphere_u));
+    w.objects.emplace(green_sphere, std::move(green_sphere_u));
+    w.light = std::move(light_u);
+
+    return camera.render(&w);
 }
 
 Canvas reflection_and_refraction_cylinder_scene() {
@@ -86,24 +234,34 @@ Canvas reflection_and_refraction_cylinder_scene() {
     b_sphere_1->transform = Transform::translation(4.6, .4, 1) * Transform::scaling(.4, .4, .4);
     b_sphere_1->material.color = Color(.8, .5, .3);
     b_sphere_1->material.shininess = 50;
+    // b_sphere_1->closed = true;
+    // b_sphere_1->minimum = -.5;
+    // b_sphere_1->maximum = .5;
 
     auto b_sphere_2_u = std::make_unique<Cylinder>();
     Cylinder* b_sphere_2 = b_sphere_2_u.get();
     b_sphere_2->transform = Transform::translation(4.7, .3, .4) * Transform::scaling(.3, .3, .3);
     b_sphere_2->material.color = Color(.9, .4, .5);
     b_sphere_2->material.shininess = 50;
+    b_sphere_2->minimum = -.5;
+    b_sphere_2->maximum = .5;
 
     auto b_sphere_3_u = std::make_unique<Cylinder>();
     Cylinder* b_sphere_3 = b_sphere_3_u.get();
     b_sphere_3->transform = Transform::translation(-1, .5, 4.5) * Transform::scaling(.5, .5, .5);
     b_sphere_3->material.color = Color(.4, .9, .6);
     b_sphere_3->material.shininess = 50;
+    b_sphere_3->closed = true;
+    b_sphere_3->minimum = 0;
+    b_sphere_3->maximum = 1;
 
     auto b_sphere_4_u = std::make_unique<Cylinder>();
     Cylinder* b_sphere_4 = b_sphere_4_u.get();
     b_sphere_4->transform = Transform::translation(-1.7, .3, 4.7) * Transform::scaling(.3, .3, .3);
     b_sphere_4->material.color = Color(.4, .6, .9);
     b_sphere_4->material.shininess = 50;
+    b_sphere_4->minimum = -.5;
+    b_sphere_4->maximum = .5;
 
     // Foreground balls
     auto red_sphere_u = std::make_unique<Cylinder>();
@@ -112,6 +270,9 @@ Canvas reflection_and_refraction_cylinder_scene() {
     red_sphere->material.color = Color(1, .3, .2);
     red_sphere->material.specular = .4;
     red_sphere->material.shininess = 5;
+    red_sphere->maximum = 1;
+    red_sphere->minimum = -.5;
+    red_sphere->closed = true;
 
     auto blue_sphere_u = std::make_unique<Cylinder>();
     Cylinder* blue_sphere = blue_sphere_u.get();
@@ -124,6 +285,9 @@ Canvas reflection_and_refraction_cylinder_scene() {
     blue_sphere->material.reflective = .9;
     blue_sphere->material.transparency = .9;
     blue_sphere->material.refractive_index = 1.5;
+    blue_sphere->closed = true;
+    blue_sphere->maximum = .5;
+    blue_sphere->minimum = -.5;
 
     auto green_sphere_u = std::make_unique<Cylinder>();
     Cylinder* green_sphere = green_sphere_u.get();
@@ -136,6 +300,8 @@ Canvas reflection_and_refraction_cylinder_scene() {
     green_sphere->material.reflective = .9;
     green_sphere->material.transparency = .9;
     green_sphere->material.refractive_index = 1.5;
+    green_sphere->minimum = -.5;
+    green_sphere->maximum = .5;
 
     World w;
 

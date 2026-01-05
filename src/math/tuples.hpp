@@ -79,6 +79,7 @@ struct Vector : public Tuple {
 
     Vector normalized() const {
         double magnitude = this->magnitude();
+        if (double_equal(magnitude,0)) return *this;
         return Vector(x / magnitude, y / magnitude, z / magnitude);
     }
 

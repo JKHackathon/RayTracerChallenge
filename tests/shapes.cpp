@@ -352,3 +352,63 @@ TEST_CASE("The normal vector on a cylinder's end caps", "[shapes][cylinders]") {
     n = cyl.normal_at(Point(0, 2, 0.5));
     REQUIRE(n == Vector(0, 1, 0));
 }
+
+TEST_CASE("Intersecting a cone with a ray", "[shapes][cones]") {
+    Cone shape;
+    Ray r(Point(0, 0, -5), Vector(0, 0, 1));
+    auto xs = shape.intersect(r);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 5));
+    REQUIRE(double_equal(xs.intersections[1].t, 5));
+
+    r = Ray(Point(0, 0, -5), Vector(1, 1, 1));
+    xs = shape.intersect(r);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 8.66025));
+    REQUIRE(double_equal(xs.intersections[1].t, 8.66025));
+
+    r = Ray(Point(1, 1, -5), Vector(-.5, -1, 1));
+    xs = shape.intersect(r);
+    REQUIRE(xs.count == 2);
+    REQUIRE(double_equal(xs.intersections[0].t, 4.55006));
+    REQUIRE(double_equal(xs.intersections[1].t, 49.44994));
+}
+
+TEST_CASE("Intersecting a cone with a ray parallel to one of its halves", "[shapes][cones]") {
+    Cone shape;
+    Ray r(Point(0, 0, -1), Vector(0, 1, 1));
+    auto xs = shape.intersect(r);
+    REQUIRE(xs.count == 1);
+    REQUIRE(double_equal(xs.intersections[0].t, .35355));
+}
+
+TEST_CASE("Intersecting a cone's end caps", "[shapes][cones]") {
+    Cone shape;
+    shape.minimum = -.5;
+    shape.maximum = .5;
+    shape.closed = true;
+
+    Ray r(Point(0, 0, -5), Vector(0, 1, 0)); // parallel ray
+    auto xs = shape.intersect(r);
+    REQUIRE(xs.count == 0);
+
+    r = Ray(Point(0, 0, -.25), Vector(0, 1, 1)); // cap + edge
+    xs = shape.intersect(r);
+    REQUIRE(xs.count == 2);
+
+    r = Ray(Point(0, 0, -.25), Vector(0, 1, 0)); // intersect both caps and both edges
+    xs = shape.intersect(r);
+    REQUIRE(xs.count == 4);
+}
+
+TEST_CASE("Computing the normal vector on a cone", "[shapes][cones]") {
+    Cone shape;
+    Vector normal = shape.normal_at(Point(0, 0, 0));
+    REQUIRE(normal == Vector(0, 0, 0));
+
+    normal = shape.normal_at(Point(1, 1, 1));
+    REQUIRE(normal == Vector(1, -sqrt(2), 1).normalized());
+
+    normal = shape.normal_at(Point(-1, -1, 0));
+    REQUIRE(normal == Vector(-1, 1, 0).normalized());
+}
