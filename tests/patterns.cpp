@@ -3,7 +3,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/geometry/shapes.hpp"
+#include "../src/geometry/shapes/all_shapes.hpp"
 #include "../src/rendering/lighting.hpp"
 
 struct ColorFixture {

@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "shapes.hpp"
+#include "shapes/shapes.hpp"
 #include <set>
 #include <list>
 

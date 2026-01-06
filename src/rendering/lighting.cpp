@@ -15,6 +15,7 @@ Color Shading::phong_lighting(Material m, const Shape* object,
     auto ambient = effective_color * m.ambient;
 
     if (in_shadow) {
+        // return Color(1,0,0);
         return ambient;
     }
 

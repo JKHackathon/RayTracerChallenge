@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     // Canvas canvas(width, height);
     World w;
 
-    build_reflective_world(&w);
+    // build_reflective_world(&w);
 
     // auto floor_u = std::make_unique<Plane>();
     // Plane* floor = floor_u.get();
@@ -93,10 +93,53 @@ int main(int argc, char* argv[]) {
     // // w.objects.emplace(inner_sphere, std::move(inner_sphere_u));
     // w.light = std::move(light_u);
 
+    auto light_u = std::make_unique<PointLight>(Point(2, 2.5, -5), Color(.9, .9, .9));
+
+    auto floor_u = std::make_unique<Plane>();
+    Plane* floor = floor_u.get();
+    floor->transform = Transform::translation(0, 0, 10) * Transform::rotation_x(M_PI / 2);
+    CheckerPattern floor_pattern(Color(.15, .15, .15), Color(.85, .85, .85));
+    floor->material.pattern = &floor_pattern;
+    floor->material.ambient = .8;
+    floor->material.diffuse = .2;
+    floor->material.specular = 0;
+
+    auto cone_u = std::make_unique<Cone>();
+    Cone* cone = cone_u.get();
+    cone->transform = Transform::translation(0, -.5, 0);
+    // cone->minimum = 1;
+    cone->maximum = 1.5;
+    cone->closed = true;
+    // cylinder->transform = Transform::scaling(.25, .25, .25);
+    cone->material.color = Color(1, 0, 0);
+    cone->material.ambient = .1;
+    cone->material.diffuse = .8;
+    cone->material.specular = .9;
+    cone->material.shininess = 300;
+
+    auto cylinder_u = std::make_unique<Cylinder>();
+    Cylinder* cylinder = cylinder_u.get();
+    cylinder->transform = Transform::scaling(1.5,1,1.5) * Transform::translation(0, -.5, 0);
+    cylinder->minimum = 0;
+    cylinder->maximum = .5;
+    cylinder->closed = true;
+    // cylinder->transform = Transform::scaling(.25, .25, .25);
+    cylinder->material.color = Color(0, 1, 0);
+    cylinder->material.ambient = .1;
+    cylinder->material.diffuse = .8;
+    cylinder->material.specular = .9;
+    cylinder->material.shininess = 300;
+
+
+    w.objects.emplace(floor, std::move(floor_u));
+    w.objects.emplace(cone, std::move(cone_u));
+    // w.objects.emplace(cylinder, std::move(cylinder_u));
+    w.light = std::move(light_u);
+
     // Camera
-    Camera camera(300, 300, M_PI / 2);  // 100, 50, M_PI / 3);
+    Camera camera(200, 200, M_PI / 4);  // 100, 50, M_PI / 3);
     camera.transform = Transform::view_transform(
-        Point(0, .01, -5), Point(0, 0, 0), Vector(0, 1, 0));
+        Point(1, 2, -5), Point(0, 0, 0), Vector(0, 1, 0));
 
     // Rendering
     auto canvas = camera.render(&w);
@@ -149,7 +192,7 @@ void build_reflective_world(World* w) {
     // Spheres
     auto middle_s_u = std::make_unique<Sphere>();
     Sphere* middle_s = middle_s_u.get();
-    middle_s->transform = Transform::translation(-.5, 1, .5) * Transform::scaling(1,1,2);
+    middle_s->transform = Transform::translation(-.5, 1, .5) * Transform::scaling(1, 1, 2);
     middle_s->material.color = Color(1, 0.2, 1);
     middle_s->material.diffuse = .7;
     middle_s->material.specular = .3;

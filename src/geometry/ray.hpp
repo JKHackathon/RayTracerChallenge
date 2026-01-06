@@ -14,7 +14,8 @@ struct Ray {
     // std::vector<Intersection> intersections;
 
     // TODO: i typically expect dir to be normalized, but maybe there are exceptions
-    Ray(Point origin, Vector dir) : origin(origin), dir(dir.normalized()) {}
+    // YEP THERE ARE: why do i not expect this to always be normalized, is it because it is sometimes transformed to a diff space?
+    Ray(Point origin, Vector dir) : origin(origin), dir(dir) {}
 
     Point position(double t) { return origin + dir * t; }
 

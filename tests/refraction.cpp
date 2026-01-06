@@ -1,7 +1,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/geometry/shapes.hpp"
+#include "../src/geometry/shapes/all_shapes.hpp"
 #include "../src/scene/world.hpp"
 
 TEST_CASE("Transparency and Refractive Index for the default material", "[refraction][materials]") {

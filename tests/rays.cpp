@@ -3,7 +3,8 @@
 
 #include "../src/geometry/intersection.hpp"
 #include "../src/geometry/ray.hpp"
-#include "../src/geometry/shapes.hpp"
+#include "../src/geometry/shapes/shapes.hpp"
+#include "../src/geometry/shapes/all_shapes.hpp"
 
 TEST_CASE("Creating and querying a ray", "[rays]") {
     Point origin(1, 2, 3);

@@ -16,13 +16,13 @@ Canvas glass_air_bubble_exact_scene();
 Canvas glass_air_cube_scene();
 Canvas reflection_and_refraction_cube_scene();
 
-Canvas reflection_and_refraction_cylinder_scene();
+Canvas cylinder_scene();
 
-Canvas reflection_and_refraction_cone_scene();
+Canvas cone_scene();
 
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = reflection_and_refraction_cone_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
+    Canvas canvas = cone_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
     std::ofstream outputFile("cones.ppm");
@@ -31,293 +31,317 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-Canvas reflection_and_refraction_cone_scene() {
-    Camera camera(400, 200, 1.152);
+Canvas cone_scene() {
+    Camera camera(600, 300, .314);
     camera.transform = Transform::view_transform(
-        Point(-2.6, 1.5, -3.9), Point(-.6, 1, -.8), Vector(0, 1, 0));
+        Point(7, 4, -8), Point(0, .3, 0), Vector(0, 1, 0));
 
-    Material wall_material;
-    StripePattern wall_pattern(Color(.45, .45, .45), Color(.55, .55, .55));
-    wall_pattern.transform = Transform::rotation_y(M_PI / 2) * Transform::scaling(.25, .25, .25);
-    wall_material.ambient = 0;
-    wall_material.diffuse = .4;
-    wall_material.specular = 0;
-    wall_material.reflective = .3;
-    wall_material.pattern = &wall_pattern;
-
-    auto light_u = std::make_unique<PointLight>(Point(-4.9, 4.9, -1), Color(1, 1, 1));
+    auto light_u = std::make_unique<PointLight>(Point(1, 6.9, -4.9), Color(1, 1, 1));
 
     auto floor_u = std::make_unique<Plane>();
     Plane* floor = floor_u.get();
-    floor->transform = Transform::rotation_y(M_PI);
-    CheckerPattern floor_pattern(Color(.35, .35, .35), Color(.65, .65, .65));
+    CheckerPattern floor_pattern(Color(.5, .5, .5), Color(.75, .75, .75));
+    floor_pattern.transform = Transform::rotation_y(.3) * Transform::scaling(.25, .25, .25);
     floor->material.pattern = &floor_pattern;
     floor->material.specular = 0;
-    floor->material.reflective = .4;
+    floor->material.ambient = .2;
+    floor->material.diffuse = .9;
 
-    auto ceiling_u = std::make_unique<Plane>();
-    Plane* ceiling = ceiling_u.get();
-    ceiling->transform = Transform::translation(0, 5, 0);
-    ceiling->material.color = Color(.8, .8, .8);
-    ceiling->material.ambient = .3;
-    ceiling->material.specular = 0;
+    // concentric cylinders
+    auto concentric_1_u = std::make_unique<Cone>();
+    Cone* concentric_1 = concentric_1_u.get();
+    concentric_1->minimum = 0;
+    concentric_1->maximum = .2;
+    concentric_1->closed = false;
+    concentric_1->transform = Transform::translation(1, 0, 0) * Transform::scaling(.8, 1, .8);
+    concentric_1->material.color = Color(1, 1, .3);
+    concentric_1->material.ambient = .1;
+    concentric_1->material.diffuse = .8;
+    concentric_1->material.specular = .9;
+    concentric_1->material.shininess = 300;
 
-    auto west_wall_u = std::make_unique<Plane>();
-    Plane* west_wall = west_wall_u.get();
-    west_wall->transform = Transform::translation(-5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
-    west_wall->material = wall_material;
+    auto concentric_2_u = std::make_unique<Cone>();
+    Cone* concentric_2 = concentric_2_u.get();
+    concentric_2->minimum = 0;
+    concentric_2->maximum = .3;
+    concentric_2->closed = false;
+    concentric_2->transform = Transform::translation(1, 0, 0) * Transform::scaling(.6, 1, .6);
+    concentric_2->material.color = Color(1, .9, .4);
+    concentric_2->material.ambient = .1;
+    concentric_2->material.diffuse = .8;
+    concentric_2->material.shininess = 300;
+    concentric_2->material.specular = .9;
 
-    auto east_wall_u = std::make_unique<Plane>();
-    Plane* east_wall = east_wall_u.get();
-    east_wall->transform = Transform::translation(5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
-    east_wall->material = wall_material;
+    auto concentric_3_u = std::make_unique<Cone>();
+    Cone* concentric_3 = concentric_3_u.get();
+    concentric_3->minimum = 0;
+    concentric_3->maximum = .4;
+    concentric_3->closed = false;
+    concentric_3->transform = Transform::translation(1, 0, 0) * Transform::scaling(.4, 1, .4);
+    concentric_3->material.color = Color(1, .8, .5);
+    concentric_3->material.ambient = .1;
+    concentric_3->material.diffuse = .8;
+    concentric_3->material.shininess = 300;
+    concentric_3->material.specular = .9;
 
-    auto north_wall_u = std::make_unique<Plane>();
-    Plane* north_wall = north_wall_u.get();
-    north_wall->transform = Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
-    north_wall->material = wall_material;
+    auto concentric_4_u = std::make_unique<Cone>();
+    Cone* concentric_4 = concentric_4_u.get();
+    concentric_4->minimum = 0;
+    concentric_4->maximum = .5;
+    concentric_4->closed = true;
+    concentric_4->transform = Transform::translation(1, 0, 0) * Transform::scaling(.2, 1, .2);
+    concentric_4->material.color = Color(1, .7, .6);
+    concentric_4->material.ambient = .1;
+    concentric_4->material.diffuse = .8;
+    concentric_4->material.shininess = 300;
+    concentric_4->material.specular = .9;
 
-    auto south_wall_u = std::make_unique<Plane>();
-    Plane* south_wall = south_wall_u.get();
-    south_wall->transform = Transform::translation(0, 0, -5) * Transform::rotation_x(M_PI / 2);
-    south_wall->material = wall_material;
+    // Decorative cylinders
+    auto decorative_1_u = std::make_unique<Cone>();
+    Cone* decorative_1 = decorative_1_u.get();
+    decorative_1->minimum = 0;
+    decorative_1->maximum = .3;
+    decorative_1->closed = true;
+    decorative_1->transform = Transform::translation(0, 0, -.75) * Transform::scaling(.05, 1, .05);
+    decorative_1->material.color = Color(1, 0, 0);
+    decorative_1->material.ambient = .1;
+    decorative_1->material.diffuse = .9;
+    decorative_1->material.shininess = 300;
+    decorative_1->material.specular = .9;
 
-    // Background balls
-    auto b_sphere_1_u = std::make_unique<Cone>();
-    Cone* b_sphere_1 = b_sphere_1_u.get();
-    b_sphere_1->transform = Transform::translation(4.6, .4, 1) * Transform::scaling(.4, .4, .4);
-    b_sphere_1->material.color = Color(.8, .5, .3);
-    b_sphere_1->material.shininess = 50;
-    // b_sphere_1->closed = true;
-    // b_sphere_1->minimum = -.5;
-    // b_sphere_1->maximum = .5;
+    auto decorative_2_u = std::make_unique<Cone>();
+    Cone* decorative_2 = decorative_2_u.get();
+    decorative_2->minimum = 0;
+    decorative_2->maximum = .3;
+    decorative_2->closed = true;
+    decorative_2->transform = Transform::translation(0, 0, -2.25) * Transform::rotation_y(-.15) * Transform::translation(0, 0, 1.5) * Transform::scaling(.05, 1, .05);
+    decorative_2->material.color = Color(1, 1, 0);
+    decorative_2->material.ambient = .1;
+    decorative_2->material.diffuse = .9;
+    decorative_2->material.shininess = 300;
+    decorative_2->material.specular = .9;
 
-    auto b_sphere_2_u = std::make_unique<Cone>();
-    Cone* b_sphere_2 = b_sphere_2_u.get();
-    b_sphere_2->transform = Transform::translation(4.7, .3, .4) * Transform::scaling(.3, .3, .3);
-    b_sphere_2->material.color = Color(.9, .4, .5);
-    b_sphere_2->material.shininess = 50;
-    b_sphere_2->minimum = -.5;
-    b_sphere_2->maximum = .5;
+    auto decorative_3_u = std::make_unique<Cone>();
+    Cone* decorative_3 = decorative_3_u.get();
+    decorative_3->minimum = 0;
+    decorative_3->maximum = .3;
+    decorative_3->closed = true;
+    decorative_3->transform = Transform::translation(0, 0, -2.25) * Transform::rotation_y(-.3) * Transform::translation(0, 0, 1.5) * Transform::scaling(.05, 1, .05);
+    decorative_3->material.color = Color(0, 1, 0);
+    decorative_3->material.ambient = .1;
+    decorative_3->material.diffuse = .9;
+    decorative_3->material.shininess = 300;
+    decorative_3->material.specular = .9;
 
-    auto b_sphere_3_u = std::make_unique<Cone>();
-    Cone* b_sphere_3 = b_sphere_3_u.get();
-    b_sphere_3->transform = Transform::translation(-1, .5, 4.5) * Transform::scaling(.5, .5, .5);
-    b_sphere_3->material.color = Color(.4, .9, .6);
-    b_sphere_3->material.shininess = 50;
-    b_sphere_3->closed = true;
-    b_sphere_3->minimum = 0;
-    b_sphere_3->maximum = 1;
+    auto decorative_4_u = std::make_unique<Cone>();
+    Cone* decorative_4 = decorative_4_u.get();
+    decorative_4->minimum = 0;
+    decorative_4->maximum = .3;
+    decorative_4->closed = true;
+    decorative_4->transform = Transform::translation(0, 0, -2.25) * Transform::rotation_y(-.45) * Transform::translation(0, 0, 1.5) * Transform::scaling(.05, 1, .05);
+    decorative_4->material.color = Color(0, 1, 1);
+    decorative_4->material.ambient = .1;
+    decorative_4->material.diffuse = .9;
+    decorative_4->material.shininess = 300;
+    decorative_4->material.specular = .9;
 
-    auto b_sphere_4_u = std::make_unique<Cone>();
-    Cone* b_sphere_4 = b_sphere_4_u.get();
-    b_sphere_4->transform = Transform::translation(-1.7, .3, 4.7) * Transform::scaling(.3, .3, .3);
-    b_sphere_4->material.color = Color(.4, .6, .9);
-    b_sphere_4->material.shininess = 50;
-    b_sphere_4->minimum = -.5;
-    b_sphere_4->maximum = .5;
 
-    // Foreground balls
-    auto red_sphere_u = std::make_unique<Cone>();
-    Cone* red_sphere = red_sphere_u.get();
-    red_sphere->transform = Transform::translation(-.6, 1, .6);
-    red_sphere->material.color = Color(1, .3, .2);
-    red_sphere->material.specular = .4;
-    red_sphere->material.shininess = 5;
-    red_sphere->maximum = 1;
-    red_sphere->minimum = -.5;
-    red_sphere->closed = true;
+    auto glass_u = std::make_unique<Cone>();
+    Cone* glass = glass_u.get();
+    glass->minimum = 0.0001;
+    glass->maximum = .5;
+    glass->closed = true;
+    glass->transform = Transform::translation(0, 0, -1.5) * Transform::scaling(.33, 1, .33);
+    glass->material.color = Color(.25, 0, 0);
+    glass->material.diffuse = .1;
+    glass->material.shininess = 300;
+    glass->material.specular = .9;
+    glass->material.transparency = .9;
+    glass->material.refractive_index = 1.5;
 
-    auto blue_sphere_u = std::make_unique<Cone>();
-    Cone* blue_sphere = blue_sphere_u.get();
-    blue_sphere->transform = Transform::translation(.6, .7, -.6) * Transform::scaling(.7, .7, .7);
-    blue_sphere->material.color = Color(0, 0, .2);
-    blue_sphere->material.ambient = 0;
-    blue_sphere->material.diffuse = .4;
-    blue_sphere->material.specular = .9;
-    red_sphere->material.shininess = 300;
-    blue_sphere->material.reflective = .9;
-    blue_sphere->material.transparency = .9;
-    blue_sphere->material.refractive_index = 1.5;
-    blue_sphere->closed = true;
-    blue_sphere->maximum = .5;
-    blue_sphere->minimum = -.5;
-
-    auto green_sphere_u = std::make_unique<Cone>();
-    Cone* green_sphere = green_sphere_u.get();
-    green_sphere->transform = Transform::translation(-.7, .5, -.8) * Transform::scaling(.5, .5, .5);
-    green_sphere->material.color = Color(0, .2, 0);
-    green_sphere->material.ambient = 0;
-    green_sphere->material.diffuse = .4;
-    green_sphere->material.specular = .9;
-    green_sphere->material.shininess = 300;
-    green_sphere->material.reflective = .9;
-    green_sphere->material.transparency = .9;
-    green_sphere->material.refractive_index = 1.5;
-    green_sphere->minimum = -.5;
-    green_sphere->maximum = .5;
+    auto reflective_u = std::make_unique<Cone>();
+    Cone* reflective = reflective_u.get();
+    reflective->minimum = 0;
+    reflective->maximum = .75;
+    reflective->closed = true;
+    reflective->transform = Transform::translation(-1, 0, 1) * Transform::scaling(.5, 1, .5);
+    reflective->material.color = Color(0, 0, 0.6); // TODO: why did this render so red
+    reflective->material.diffuse = .1;
+    reflective->material.shininess = 300;
+    reflective->material.specular = .9;
+    reflective->material.reflective = .9;
 
     World w;
 
     w.objects.emplace(floor, std::move(floor_u));
-    w.objects.emplace(ceiling, std::move(ceiling_u));
-    w.objects.emplace(north_wall, std::move(north_wall_u));
-    w.objects.emplace(west_wall, std::move(west_wall_u));
-    w.objects.emplace(east_wall, std::move(east_wall_u));
-    w.objects.emplace(south_wall, std::move(south_wall_u));
-    w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
-    w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
-    w.objects.emplace(b_sphere_3, std::move(b_sphere_3_u));
-    w.objects.emplace(b_sphere_4, std::move(b_sphere_4_u));
-    w.objects.emplace(red_sphere, std::move(red_sphere_u));
-    w.objects.emplace(blue_sphere, std::move(blue_sphere_u));
-    w.objects.emplace(green_sphere, std::move(green_sphere_u));
+    w.objects.emplace(concentric_1, std::move(concentric_1_u));
+    // w.objects.emplace(concentric_2, std::move(concentric_2_u));
+    // w.objects.emplace(concentric_3, std::move(concentric_3_u));
+    // w.objects.emplace(concentric_4, std::move(concentric_4_u));
+    // w.objects.emplace(decorative_1, std::move(decorative_1_u));
+    // w.objects.emplace(decorative_2, std::move(decorative_2_u));
+    // w.objects.emplace(decorative_3, std::move(decorative_3_u));
+    // w.objects.emplace(decorative_4, std::move(decorative_4_u));
+    // w.objects.emplace(glass, std::move(glass_u));
+    // w.objects.emplace(reflective, std::move(reflective_u));
     w.light = std::move(light_u);
 
     return camera.render(&w);
 }
 
-Canvas reflection_and_refraction_cylinder_scene() {
-    Camera camera(400, 200, 1.152);
+Canvas cylinder_scene() {
+    Camera camera(400, 200, .314);
     camera.transform = Transform::view_transform(
-        Point(-2.6, 1.5, -3.9), Point(-.6, 1, -.8), Vector(0, 1, 0));
+        Point(8, 3.5, -9), Point(0, .3, 0), Vector(0, 1, 0));
 
-    Material wall_material;
-    StripePattern wall_pattern(Color(.45, .45, .45), Color(.55, .55, .55));
-    wall_pattern.transform = Transform::rotation_y(M_PI / 2) * Transform::scaling(.25, .25, .25);
-    wall_material.ambient = 0;
-    wall_material.diffuse = .4;
-    wall_material.specular = 0;
-    wall_material.reflective = .3;
-    wall_material.pattern = &wall_pattern;
-
-    auto light_u = std::make_unique<PointLight>(Point(-4.9, 4.9, -1), Color(1, 1, 1));
+    auto light_u = std::make_unique<PointLight>(Point(1, 6.9, -4.9), Color(1, 1, 1));
 
     auto floor_u = std::make_unique<Plane>();
     Plane* floor = floor_u.get();
-    floor->transform = Transform::rotation_y(M_PI);
-    CheckerPattern floor_pattern(Color(.35, .35, .35), Color(.65, .65, .65));
+    CheckerPattern floor_pattern(Color(.5, .5, .5), Color(.75, .75, .75));
+    floor_pattern.transform = Transform::rotation_y(.3) * Transform::scaling(.25, .25, .25);
     floor->material.pattern = &floor_pattern;
     floor->material.specular = 0;
-    floor->material.reflective = .4;
+    floor->material.ambient = .2;
+    floor->material.diffuse = .9;
 
-    auto ceiling_u = std::make_unique<Plane>();
-    Plane* ceiling = ceiling_u.get();
-    ceiling->transform = Transform::translation(0, 5, 0);
-    ceiling->material.color = Color(.8, .8, .8);
-    ceiling->material.ambient = .3;
-    ceiling->material.specular = 0;
+    // concentric cylinders
+    auto concentric_1_u = std::make_unique<Cylinder>();
+    Cylinder* concentric_1 = concentric_1_u.get();
+    concentric_1->minimum = 0;
+    concentric_1->maximum = .2;
+    concentric_1->closed = false;
+    concentric_1->transform = Transform::translation(1, 0, 0) * Transform::scaling(.8, 1, .8);
+    concentric_1->material.color = Color(1, 1, .3);
+    concentric_1->material.ambient = .1;
+    concentric_1->material.diffuse = .8;
+    concentric_1->material.specular = .9;
+    concentric_1->material.shininess = 300;
 
-    auto west_wall_u = std::make_unique<Plane>();
-    Plane* west_wall = west_wall_u.get();
-    west_wall->transform = Transform::translation(-5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
-    west_wall->material = wall_material;
+    auto concentric_2_u = std::make_unique<Cylinder>();
+    Cylinder* concentric_2 = concentric_2_u.get();
+    concentric_2->minimum = 0;
+    concentric_2->maximum = .3;
+    concentric_2->closed = false;
+    concentric_2->transform = Transform::translation(1, 0, 0) * Transform::scaling(.6, 1, .6);
+    concentric_2->material.color = Color(1, .9, .4);
+    concentric_2->material.ambient = .1;
+    concentric_2->material.diffuse = .8;
+    concentric_2->material.shininess = 300;
+    concentric_2->material.specular = .9;
 
-    auto east_wall_u = std::make_unique<Plane>();
-    Plane* east_wall = east_wall_u.get();
-    east_wall->transform = Transform::translation(5, 0, 0) * Transform::rotation_z(M_PI / 2) * Transform::rotation_y(M_PI / 2);
-    east_wall->material = wall_material;
+    auto concentric_3_u = std::make_unique<Cylinder>();
+    Cylinder* concentric_3 = concentric_3_u.get();
+    concentric_3->minimum = 0;
+    concentric_3->maximum = .4;
+    concentric_3->closed = false;
+    concentric_3->transform = Transform::translation(1, 0, 0) * Transform::scaling(.4, 1, .4);
+    concentric_3->material.color = Color(1, .8, .5);
+    concentric_3->material.ambient = .1;
+    concentric_3->material.diffuse = .8;
+    concentric_3->material.shininess = 300;
+    concentric_3->material.specular = .9;
 
-    auto north_wall_u = std::make_unique<Plane>();
-    Plane* north_wall = north_wall_u.get();
-    north_wall->transform = Transform::translation(0, 0, 5) * Transform::rotation_x(M_PI / 2);
-    north_wall->material = wall_material;
+    auto concentric_4_u = std::make_unique<Cylinder>();
+    Cylinder* concentric_4 = concentric_4_u.get();
+    concentric_4->minimum = 0;
+    concentric_4->maximum = .5;
+    concentric_4->closed = true;
+    concentric_4->transform = Transform::translation(1, 0, 0) * Transform::scaling(.2, 1, .2);
+    concentric_4->material.color = Color(1, .7, .6);
+    concentric_4->material.ambient = .1;
+    concentric_4->material.diffuse = .8;
+    concentric_4->material.shininess = 300;
+    concentric_4->material.specular = .9;
 
-    auto south_wall_u = std::make_unique<Plane>();
-    Plane* south_wall = south_wall_u.get();
-    south_wall->transform = Transform::translation(0, 0, -5) * Transform::rotation_x(M_PI / 2);
-    south_wall->material = wall_material;
+    // Decorative cylinders
+    auto decorative_1_u = std::make_unique<Cylinder>();
+    Cylinder* decorative_1 = decorative_1_u.get();
+    decorative_1->minimum = 0;
+    decorative_1->maximum = .3;
+    decorative_1->closed = true;
+    decorative_1->transform = Transform::translation(0, 0, -.75) * Transform::scaling(.05, 1, .05);
+    decorative_1->material.color = Color(1, 0, 0);
+    decorative_1->material.ambient = .1;
+    decorative_1->material.diffuse = .9;
+    decorative_1->material.shininess = 300;
+    decorative_1->material.specular = .9;
 
-    // Background balls
-    auto b_sphere_1_u = std::make_unique<Cylinder>();
-    Cylinder* b_sphere_1 = b_sphere_1_u.get();
-    b_sphere_1->transform = Transform::translation(4.6, .4, 1) * Transform::scaling(.4, .4, .4);
-    b_sphere_1->material.color = Color(.8, .5, .3);
-    b_sphere_1->material.shininess = 50;
-    // b_sphere_1->closed = true;
-    // b_sphere_1->minimum = -.5;
-    // b_sphere_1->maximum = .5;
+    auto decorative_2_u = std::make_unique<Cylinder>();
+    Cylinder* decorative_2 = decorative_2_u.get();
+    decorative_2->minimum = 0;
+    decorative_2->maximum = .3;
+    decorative_2->closed = true;
+    decorative_2->transform = Transform::translation(0, 0, -2.25) * Transform::rotation_y(-.15) * Transform::translation(0, 0, 1.5) * Transform::scaling(.05, 1, .05);
+    decorative_2->material.color = Color(1, 1, 0);
+    decorative_2->material.ambient = .1;
+    decorative_2->material.diffuse = .9;
+    decorative_2->material.shininess = 300;
+    decorative_2->material.specular = .9;
 
-    auto b_sphere_2_u = std::make_unique<Cylinder>();
-    Cylinder* b_sphere_2 = b_sphere_2_u.get();
-    b_sphere_2->transform = Transform::translation(4.7, .3, .4) * Transform::scaling(.3, .3, .3);
-    b_sphere_2->material.color = Color(.9, .4, .5);
-    b_sphere_2->material.shininess = 50;
-    b_sphere_2->minimum = -.5;
-    b_sphere_2->maximum = .5;
+    auto decorative_3_u = std::make_unique<Cylinder>();
+    Cylinder* decorative_3 = decorative_3_u.get();
+    decorative_3->minimum = 0;
+    decorative_3->maximum = .3;
+    decorative_3->closed = true;
+    decorative_3->transform = Transform::translation(0, 0, -2.25) * Transform::rotation_y(-.3) * Transform::translation(0, 0, 1.5) * Transform::scaling(.05, 1, .05);
+    decorative_3->material.color = Color(0, 1, 0);
+    decorative_3->material.ambient = .1;
+    decorative_3->material.diffuse = .9;
+    decorative_3->material.shininess = 300;
+    decorative_3->material.specular = .9;
 
-    auto b_sphere_3_u = std::make_unique<Cylinder>();
-    Cylinder* b_sphere_3 = b_sphere_3_u.get();
-    b_sphere_3->transform = Transform::translation(-1, .5, 4.5) * Transform::scaling(.5, .5, .5);
-    b_sphere_3->material.color = Color(.4, .9, .6);
-    b_sphere_3->material.shininess = 50;
-    b_sphere_3->closed = true;
-    b_sphere_3->minimum = 0;
-    b_sphere_3->maximum = 1;
+    auto decorative_4_u = std::make_unique<Cylinder>();
+    Cylinder* decorative_4 = decorative_4_u.get();
+    decorative_4->minimum = 0;
+    decorative_4->maximum = .3;
+    decorative_4->closed = true;
+    decorative_4->transform = Transform::translation(0, 0, -2.25) * Transform::rotation_y(-.45) * Transform::translation(0, 0, 1.5) * Transform::scaling(.05, 1, .05);
+    decorative_4->material.color = Color(0, 1, 1);
+    decorative_4->material.ambient = .1;
+    decorative_4->material.diffuse = .9;
+    decorative_4->material.shininess = 300;
+    decorative_4->material.specular = .9;
 
-    auto b_sphere_4_u = std::make_unique<Cylinder>();
-    Cylinder* b_sphere_4 = b_sphere_4_u.get();
-    b_sphere_4->transform = Transform::translation(-1.7, .3, 4.7) * Transform::scaling(.3, .3, .3);
-    b_sphere_4->material.color = Color(.4, .6, .9);
-    b_sphere_4->material.shininess = 50;
-    b_sphere_4->minimum = -.5;
-    b_sphere_4->maximum = .5;
 
-    // Foreground balls
-    auto red_sphere_u = std::make_unique<Cylinder>();
-    Cylinder* red_sphere = red_sphere_u.get();
-    red_sphere->transform = Transform::translation(-.6, 1, .6);
-    red_sphere->material.color = Color(1, .3, .2);
-    red_sphere->material.specular = .4;
-    red_sphere->material.shininess = 5;
-    red_sphere->maximum = 1;
-    red_sphere->minimum = -.5;
-    red_sphere->closed = true;
+    auto glass_u = std::make_unique<Cylinder>();
+    Cylinder* glass = glass_u.get();
+    glass->minimum = 0.0001;
+    glass->maximum = .5;
+    glass->closed = true;
+    glass->transform = Transform::translation(0, 0, -1.5) * Transform::scaling(.33, 1, .33);
+    glass->material.color = Color(.25, 0, 0);
+    glass->material.diffuse = .1;
+    glass->material.shininess = 300;
+    glass->material.specular = .9;
+    glass->material.transparency = .9;
+    glass->material.refractive_index = 1.5;
 
-    auto blue_sphere_u = std::make_unique<Cylinder>();
-    Cylinder* blue_sphere = blue_sphere_u.get();
-    blue_sphere->transform = Transform::translation(.6, .7, -.6) * Transform::scaling(.7, .7, .7);
-    blue_sphere->material.color = Color(0, 0, .2);
-    blue_sphere->material.ambient = 0;
-    blue_sphere->material.diffuse = .4;
-    blue_sphere->material.specular = .9;
-    red_sphere->material.shininess = 300;
-    blue_sphere->material.reflective = .9;
-    blue_sphere->material.transparency = .9;
-    blue_sphere->material.refractive_index = 1.5;
-    blue_sphere->closed = true;
-    blue_sphere->maximum = .5;
-    blue_sphere->minimum = -.5;
-
-    auto green_sphere_u = std::make_unique<Cylinder>();
-    Cylinder* green_sphere = green_sphere_u.get();
-    green_sphere->transform = Transform::translation(-.7, .5, -.8) * Transform::scaling(.5, .5, .5);
-    green_sphere->material.color = Color(0, .2, 0);
-    green_sphere->material.ambient = 0;
-    green_sphere->material.diffuse = .4;
-    green_sphere->material.specular = .9;
-    green_sphere->material.shininess = 300;
-    green_sphere->material.reflective = .9;
-    green_sphere->material.transparency = .9;
-    green_sphere->material.refractive_index = 1.5;
-    green_sphere->minimum = -.5;
-    green_sphere->maximum = .5;
+    auto reflective_u = std::make_unique<Cylinder>();
+    Cylinder* reflective = reflective_u.get();
+    reflective->minimum = 0;
+    reflective->maximum = .75;
+    reflective->closed = true;
+    reflective->transform = Transform::translation(-1, 0, 1) * Transform::scaling(.5, 1, .5);
+    reflective->material.color = Color(0, 0, 0.6); // TODO: why did this render so red
+    reflective->material.diffuse = .1;
+    reflective->material.shininess = 300;
+    reflective->material.specular = .9;
+    reflective->material.reflective = .9;
 
     World w;
 
     w.objects.emplace(floor, std::move(floor_u));
-    w.objects.emplace(ceiling, std::move(ceiling_u));
-    w.objects.emplace(north_wall, std::move(north_wall_u));
-    w.objects.emplace(west_wall, std::move(west_wall_u));
-    w.objects.emplace(east_wall, std::move(east_wall_u));
-    w.objects.emplace(south_wall, std::move(south_wall_u));
-    w.objects.emplace(b_sphere_1, std::move(b_sphere_1_u));
-    w.objects.emplace(b_sphere_2, std::move(b_sphere_2_u));
-    w.objects.emplace(b_sphere_3, std::move(b_sphere_3_u));
-    w.objects.emplace(b_sphere_4, std::move(b_sphere_4_u));
-    w.objects.emplace(red_sphere, std::move(red_sphere_u));
-    w.objects.emplace(blue_sphere, std::move(blue_sphere_u));
-    w.objects.emplace(green_sphere, std::move(green_sphere_u));
+    w.objects.emplace(concentric_1, std::move(concentric_1_u));
+    w.objects.emplace(concentric_2, std::move(concentric_2_u));
+    w.objects.emplace(concentric_3, std::move(concentric_3_u));
+    w.objects.emplace(concentric_4, std::move(concentric_4_u));
+    w.objects.emplace(decorative_1, std::move(decorative_1_u));
+    w.objects.emplace(decorative_2, std::move(decorative_2_u));
+    w.objects.emplace(decorative_3, std::move(decorative_3_u));
+    w.objects.emplace(decorative_4, std::move(decorative_4_u));
+    w.objects.emplace(glass, std::move(glass_u));
+    w.objects.emplace(reflective, std::move(reflective_u));
     w.light = std::move(light_u);
 
     return camera.render(&w);

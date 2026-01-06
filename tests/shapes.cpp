@@ -1,4 +1,4 @@
-#include "../src/geometry/shapes.hpp"
+#include "../src/geometry/shapes/all_shapes.hpp"
 
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -238,7 +238,7 @@ TEST_CASE("A ray strikes a cylinder", "[shapes][cylinders]") {
     REQUIRE(double_equal(xs.intersections[0].t, 4));
     REQUIRE(double_equal(xs.intersections[1].t, 6));
 
-    r = Ray(Point(0.5, 0, -5), Vector(0.1, 1, 1));
+    r = Ray(Point(0.5, 0, -5), Vector(0.1, 1, 1).normalized());
     xs = cyl.intersect(r);
     REQUIRE(xs.count == 2);
     REQUIRE(double_equal(xs.intersections[0].t, 6.80798));
@@ -361,13 +361,13 @@ TEST_CASE("Intersecting a cone with a ray", "[shapes][cones]") {
     REQUIRE(double_equal(xs.intersections[0].t, 5));
     REQUIRE(double_equal(xs.intersections[1].t, 5));
 
-    r = Ray(Point(0, 0, -5), Vector(1, 1, 1));
+    r = Ray(Point(0, 0, -5), Vector(1, 1, 1).normalized());
     xs = shape.intersect(r);
     REQUIRE(xs.count == 2);
     REQUIRE(double_equal(xs.intersections[0].t, 8.66025));
     REQUIRE(double_equal(xs.intersections[1].t, 8.66025));
 
-    r = Ray(Point(1, 1, -5), Vector(-.5, -1, 1));
+    r = Ray(Point(1, 1, -5), Vector(-.5, -1, 1).normalized());
     xs = shape.intersect(r);
     REQUIRE(xs.count == 2);
     REQUIRE(double_equal(xs.intersections[0].t, 4.55006));
@@ -376,7 +376,7 @@ TEST_CASE("Intersecting a cone with a ray", "[shapes][cones]") {
 
 TEST_CASE("Intersecting a cone with a ray parallel to one of its halves", "[shapes][cones]") {
     Cone shape;
-    Ray r(Point(0, 0, -1), Vector(0, 1, 1));
+    Ray r(Point(0, 0, -1), Vector(0, 1, 1).normalized());
     auto xs = shape.intersect(r);
     REQUIRE(xs.count == 1);
     REQUIRE(double_equal(xs.intersections[0].t, .35355));

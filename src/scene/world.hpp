@@ -3,8 +3,9 @@
 #include <unordered_map>
 
 #include "../geometry/intersection.hpp"
-#include "../geometry/shapes.hpp"
+#include "../geometry/shapes/shapes.hpp"
 #include "../rendering/lighting.hpp"
+#include "../geometry/shapes/all_shapes.hpp"
 
 // struct UniquePtrHash {
 //     template <typename T>
