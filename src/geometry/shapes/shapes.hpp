@@ -8,10 +8,13 @@
 #include "../intersection.hpp"
 #include "../ray.hpp"
 
+struct Group;
+
 struct Shape {
 public:
     Transform transform;
     Material material;
+    std::optional<Group*> parent; // Does not own group, therefore
 
     Shape() {}
     Shape(Transform transform, Material material)
@@ -19,18 +22,10 @@ public:
     }
     virtual ~Shape() = default; // Required for children's destructor to be called
 
-    Vector normal_at(const Point p) const {
-        Vector n_o = this->local_normal_at(transform.inverse() * p);
-        auto n_w = transform.inverse().transpose() * n_o;
-        n_w.w = 0;
-        return Vector(n_w).normalized();
-    }
-
-    IntersectionRecord intersect(const Ray r) {
-        Ray obj_space_ray = r.transform(transform.inverse());
-        return this->local_intersect(obj_space_ray);
-    }
-
+    Vector normal_at(const Point p) const;
+    IntersectionRecord intersect(const Ray r) const;
+    Point world_to_object(Point p) const;
+    Vector normal_to_world(Vector normal) const;
 private:
     virtual IntersectionRecord local_intersect(const Ray local_r) const = 0;
     virtual Vector local_normal_at(const Point local_p) const = 0;
