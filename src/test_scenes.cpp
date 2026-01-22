@@ -20,15 +20,66 @@ Canvas cylinder_scene();
 
 Canvas cone_scene();
 
+Canvas group_scene();
+
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = cone_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
+    Canvas canvas = group_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("cones.ppm");
+    std::ofstream outputFile("groups.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
+}
+
+Canvas group_scene() {
+    auto hexagon_corner = []() {
+        auto corner_u = std::make_unique<Sphere>();
+        corner_u.get()->transform = Transform::translation(0, 0, -1) *
+            Transform::scaling(.25, .25, .25);
+        return corner_u;
+        };
+
+    auto hexagon_edge = []() {
+        auto edge_u = std::make_unique<Cylinder>();
+        Cylinder* edge = edge_u.get();
+        edge->minimum = 0;
+        edge->maximum = 1;
+        edge->transform = Transform::translation(0, 0, -1) *
+            Transform::rotation_y(-M_PI / 6) *
+            Transform::rotation_z(-M_PI / 2) *
+            Transform::scaling(.25, 1, .25);
+        return edge_u;
+        };
+
+    auto hexagon_side = [hexagon_corner, hexagon_edge]() {
+        auto side_u = std::make_unique<Group>();
+        side_u.get()->add_child(std::move(hexagon_corner()));
+        side_u.get()->add_child(std::move(hexagon_edge()));
+        return side_u;
+        };
+
+    auto hexagon = [hexagon_side]() {
+        auto hex = std::make_unique<Group>();
+        for (int n = 0; n < 6; n++) {
+            auto side = hexagon_side();
+            side.get()->transform = Transform::rotation_y(n * M_PI / 3);
+            hex.get()->add_child(std::move(side));
+        }
+        return hex;
+        };
+
+    auto light_u = std::make_unique<PointLight>(Point(2, 10, -5), Color(.9, .9, .9));
+    Camera camera(300, 300, .45);
+    camera.transform = Transform::view_transform(
+        Point(2, 3, -7), Point(0, 0, 0), Vector(0, 1, 0));
+
+    World w;
+    w.light = std::move(light_u);
+    auto hex_model_u = hexagon();
+    w.objects.emplace(hex_model_u.get(), std::move(hex_model_u));
+    return camera.render(&w);
 }
 
 Canvas cone_scene() {
