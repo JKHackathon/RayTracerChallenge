@@ -19,7 +19,7 @@ TEST_CASE("Adding a child to a group", "[shapes][groups]") {
     auto s_u = std::make_unique<TestShape>();
     TestShape* s = s_u.get();
     g.add_child(std::move(s_u));
-    REQUIRE(g.shapes.contains(s));
+    REQUIRE(g.shapes[0].get() == s);
     REQUIRE(s->parent.has_value());
     REQUIRE(s->parent.value() == &g);
 }

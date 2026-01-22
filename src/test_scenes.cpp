@@ -6,6 +6,7 @@
 #include "geometry/ray.hpp"
 #include "rendering/camera.hpp"
 #include "rendering/lighting.hpp"
+#include "geometry/shapes/obj_parser.hpp"
 
 Canvas shadow_puppets_scene();
 
@@ -21,16 +22,32 @@ Canvas cylinder_scene();
 Canvas cone_scene();
 
 Canvas group_scene();
+Canvas mesh_scene();
 
 int main(int argc, char* argv[]) {
 
-    Canvas canvas = group_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
+    Canvas canvas = mesh_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("groups.ppm");
+    std::ofstream outputFile("teapot.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
+}
+
+Canvas mesh_scene() {
+    auto light_u = std::make_unique<PointLight>(Point(2, 10, -5), Color(.9, .9, .9));
+    Camera camera(300, 300, .45);
+    camera.transform = Transform::view_transform(
+        Point(10, 20, -80), Point(0, 0, 0), Vector(0, 1, 0));
+
+    ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/simple_teapot.obj");
+    auto mesh_u = std::move(parser).obj_to_group();
+
+    World w;
+    w.light = std::move(light_u);
+    w.objects.emplace(mesh_u.get(), std::move(mesh_u));
+    return camera.render(&w);
 }
 
 Canvas group_scene() {

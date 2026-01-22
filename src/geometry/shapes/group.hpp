@@ -30,11 +30,13 @@ struct ShapePtrEqual {
 
 struct Group : public Shape {
     // TODO: should this be a normal ptr? Does the group own it or does the world?
-    std::unordered_set<std::unique_ptr<Shape>, ShapePtrHash, ShapePtrEqual> shapes;
+    // std::unordered_set<std::unique_ptr<Shape>, ShapePtrHash, ShapePtrEqual> shapes;
+    std::vector<std::unique_ptr<Shape>> shapes;
 
     void add_child(std::unique_ptr<Shape> shape) {
         shape.get()->parent = this;
-        shapes.emplace(std::move(shape));
+        // shapes.emplace(std::move(shape));
+        shapes.push_back(std::move(shape));
     }
 
 private:

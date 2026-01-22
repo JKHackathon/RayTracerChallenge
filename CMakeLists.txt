@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(Boost CONFIG REQUIRED)
+
 # Path to Catch2 relative to project1
 # add_subdirectory("../packages/catch2" catch2_build)
 
@@ -21,12 +23,14 @@ add_executable(raytracer
                 src/geometry/shapes/group.cpp
                 src/geometry/shapes/triangle.cpp
                 src/geometry/shapes/shapes.cpp
+                src/geometry/shapes/obj_parser.cpp
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
                 src/scene/patterns.cpp
                 src/math/transformations.cpp
                 src/rendering/camera.cpp
 )
+target_link_libraries(raytracer PRIVATE Boost::headers)
 
 add_executable(bench_renders
                 src/test_scenes.cpp
@@ -39,13 +43,15 @@ add_executable(bench_renders
                 src/geometry/shapes/cylinder.cpp   
                 src/geometry/shapes/group.cpp   
                 src/geometry/shapes/triangle.cpp
-                src/geometry/shapes/shapes.cpp    
+                src/geometry/shapes/shapes.cpp 
+                src/geometry/shapes/obj_parser.cpp   
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
                 src/scene/patterns.cpp
                 src/math/transformations.cpp
                 src/rendering/camera.cpp
 )
+target_link_libraries(bench_renders PRIVATE Boost::headers)
 
 find_package(Catch2 3 REQUIRED CONFIG)
 enable_testing()
@@ -76,6 +82,7 @@ add_executable(tests
                 src/geometry/shapes/group.cpp
                 src/geometry/shapes/triangle.cpp
                 src/geometry/shapes/shapes.cpp
+                src/geometry/shapes/obj_parser.cpp
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
                 src/scene/patterns.cpp
@@ -83,7 +90,8 @@ add_executable(tests
                 src/rendering/camera.cpp
 )
 
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain Boost::headers)
+
 
 # These tests need their own main
 # add_executable(custom-main-tests test.cpp test-main.cpp)
