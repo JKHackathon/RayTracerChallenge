@@ -19,6 +19,7 @@ add_executable(raytracer
                 src/geometry/shapes/cone.cpp
                 src/geometry/shapes/cylinder.cpp
                 src/geometry/shapes/group.cpp
+                src/geometry/shapes/triangle.cpp
                 src/geometry/shapes/shapes.cpp
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
@@ -37,6 +38,7 @@ add_executable(bench_renders
                 src/geometry/shapes/cone.cpp
                 src/geometry/shapes/cylinder.cpp   
                 src/geometry/shapes/group.cpp   
+                src/geometry/shapes/triangle.cpp
                 src/geometry/shapes/shapes.cpp    
                 src/rendering/lighting.cpp
                 src/scene/world.cpp
@@ -63,6 +65,7 @@ add_executable(tests
                 tests/reflection.cpp
                 tests/refraction.cpp
                 tests/groups.cpp
+                tests/triangles.cpp
                 src/canvas.cpp
                 src/math/matrix.cpp
                 src/geometry/intersection.cpp
@@ -71,6 +74,7 @@ add_executable(tests
                 src/geometry/shapes/cone.cpp
                 src/geometry/shapes/cylinder.cpp
                 src/geometry/shapes/group.cpp
+                src/geometry/shapes/triangle.cpp
                 src/geometry/shapes/shapes.cpp
                 src/rendering/lighting.cpp
                 src/scene/world.cpp

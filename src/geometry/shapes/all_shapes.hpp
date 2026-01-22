@@ -6,5 +6,6 @@
 #include "cylinder.hpp"
 #include "cone.hpp"
 #include "group.hpp"
+#include "triangle.hpp"
 
 // Umbrella header for scene descriptions (TODO: make factory in the future w/ YAML scene description)
