@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     Canvas canvas = mesh_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("teapot.ppm");
+    std::ofstream outputFile("smooth_teapot.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
@@ -43,6 +43,7 @@ Canvas mesh_scene() {
 
     ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/simple_teapot.obj");
     auto mesh_u = std::move(parser).obj_to_group();
+    mesh_u.get()->transform = Transform::rotation_x(-M_PI / 2);
 
     World w;
     w.light = std::move(light_u);

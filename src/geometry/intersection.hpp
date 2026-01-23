@@ -8,8 +8,14 @@ struct Shape;
 struct Intersection {
     double t;
     const Shape* object;  // const
-
+    double u; // TODO: consider making these optional
+    double v;
+    Intersection() {}
     Intersection(double t, const Shape* object) : t(t), object(object) {}
+    // TODO: u,v should only be used with triangles, move construction to cpp and make Triangle*
+    Intersection(double t, const Shape* tri, double u, double v) :
+        t(t), object(tri), u(u), v(v) {
+    }
 
     bool operator==(const Intersection& other) const {
         return t == other.t && object == other.object;

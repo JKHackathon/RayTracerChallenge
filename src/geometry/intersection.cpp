@@ -29,7 +29,7 @@ PrecomputedIntersection PrecomputedIntersection::prepare_computations(
     // Precompute useful values // TODO: why do this?
     comps.point = r.position(comps.t);
     comps.eye = -r.dir;
-    comps.normal = comps.object->normal_at(comps.point);
+    comps.normal = comps.object->normal_at(comps.point, i);
 
     // flip normal if inside object
     comps.inside = false;

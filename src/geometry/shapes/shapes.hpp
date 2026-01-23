@@ -22,13 +22,13 @@ public:
     }
     virtual ~Shape() = default; // Required for children's destructor to be called
 
-    Vector normal_at(const Point p) const;
+    Vector normal_at(const Point p, const Intersection i = Intersection()) const;
     IntersectionRecord intersect(const Ray r) const;
     Point world_to_object(Point p) const;
     Vector normal_to_world(Vector normal) const;
 private:
     virtual IntersectionRecord local_intersect(const Ray local_r) const = 0;
-    virtual Vector local_normal_at(const Point local_p) const = 0;
+    virtual Vector local_normal_at(const Point local_p, Intersection i) const = 0;
 };
 
 struct TestShape : public Shape {
@@ -36,7 +36,7 @@ public:
     mutable std::optional<Ray> saved_ray;
 
 private:
-    Vector local_normal_at(const Point p) const override {
+    Vector local_normal_at(const Point p, const Intersection i) const override {
         return Vector(p.x, p.y, p.z);
     }
     IntersectionRecord local_intersect(const Ray local_r) const override {

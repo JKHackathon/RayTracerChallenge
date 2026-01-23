@@ -126,12 +126,89 @@ TEST_CASE("Triangles in groups", "[triangles][obj_files]") {
 
 TEST_CASE("Converting an OBJ file to a group", "[triangles][obj_files]") {
     ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/test12.obj");
-
-    auto g = std::move(parser).obj_to_group();
     Group* g1 = parser.get_group("FirstGroup");
     Group* g2 = parser.get_group("SecondGroup");
+
+    auto g = std::move(parser).obj_to_group();
 
     REQUIRE((g->shapes[0].get() == g1 || g->shapes[0].get() == g2));
     REQUIRE((g->shapes[1].get() == g1 || g->shapes[1].get() == g2));
 
+}
+
+struct SmoothTriangleFixture {
+    Point p1 = Point(0, 1, 0);
+    Point p2 = Point(-1, 0, 0);
+    Point p3 = Point(1, 0, 0);
+    Vector n1 = Vector(0, 1, 0);
+    Vector n2 = Vector(-1, 0, 0);
+    Vector n3 = Vector(1, 0, 0);
+    SmoothTriangle tri = SmoothTriangle(p1, p2, p3, n1, n2, n3);
+};
+
+TEST_CASE_METHOD(SmoothTriangleFixture, "Constructing a smooth triangle", "[triangles]") {
+    REQUIRE(tri.p1 == p1);
+    REQUIRE(tri.p2 == p2);
+    REQUIRE(tri.p3 == p3);
+    REQUIRE(tri.n1 == n1);
+    REQUIRE(tri.n2 == n2);
+    REQUIRE(tri.n3 == n3);
+}
+
+TEST_CASE("An intersection can encapsulate `u` and `v`", "[triangles][intersections]") {
+    Triangle s(Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0));
+    auto i = Intersection(3.5, &s, .2, .4);
+    REQUIRE(double_equal(i.u, 0.2));
+    REQUIRE(double_equal(i.v, 0.4));
+}
+
+TEST_CASE_METHOD(SmoothTriangleFixture, "An intersection with a smooth triangle stores u/v", "[triangles]") {
+    Ray r(Point(-.2, .3, -2), Vector(0, 0, 1));
+    auto xs = tri.intersect(r);
+    REQUIRE(xs.count == 1);
+    REQUIRE(double_equal(xs.intersections[0].u, 0.45));
+    REQUIRE(double_equal(xs.intersections[0].v, 0.25));
+}
+
+TEST_CASE_METHOD(SmoothTriangleFixture, "A smooth triangle uses u/v to interpolate the normal", "[triangles]") {
+    Intersection i(1, &tri, .45, .25);
+    Vector n = tri.normal_at(Point(0, 0, 0), i);
+    REQUIRE(n == Vector(-0.5547, 0.83205, 0));
+}
+
+TEST_CASE_METHOD(SmoothTriangleFixture, "Preparing the normal on a smooth triangle", "[triangles]") {
+    Intersection i(1, &tri, .45, .25);
+    Ray r(Point(-.2, .3, -2), Vector(0, 0, 1));
+    auto xs = IntersectionRecord(i);
+    auto comps = PrecomputedIntersection::prepare_computations(i, r, &xs);
+    REQUIRE(comps.normal == Vector(-0.5547, 0.83205, 0));
+}
+
+TEST_CASE("Vertex normal records", "[triangles][obj_files]") {
+    ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/test19.obj");
+    REQUIRE(parser.normals[1] == Vector(0, 0, 1));
+    REQUIRE(parser.normals[2] == Vector(0.707, 0, -0.707));
+    REQUIRE(parser.normals[3] == Vector(1, 2, 3));
+}
+
+TEST_CASE("Faces with normals", "[triangles][obj_files]") {
+    ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/test20.obj");
+    auto g = parser.get_default_group();
+    auto t1 = dynamic_cast<SmoothTriangle*>(g->shapes[0].get());
+    auto t2 = dynamic_cast<SmoothTriangle*>(g->shapes[1].get());
+
+    REQUIRE(t1->p1 == parser.vertices[1]);
+    REQUIRE(t1->p2 == parser.vertices[2]);
+    REQUIRE(t1->p3 == parser.vertices[3]);
+    REQUIRE(t1->n1 == parser.normals[3]);
+    REQUIRE(t1->n2 == parser.normals[1]);
+    REQUIRE(t1->n3 == parser.normals[2]);
+
+    REQUIRE(t2->p1 == parser.vertices[1]);
+    REQUIRE(t2->p2 == parser.vertices[2]);
+    REQUIRE(t2->p3 == parser.vertices[3]);
+    REQUIRE(t2->n1 == parser.normals[3]);
+    REQUIRE(t2->n2 == parser.normals[1]);
+    REQUIRE(t2->n3 == parser.normals[2]);
+    // REQUIRE(t1 == t2); // TODO: should triangles with identical values be considered equivalent?
 }

@@ -1,6 +1,6 @@
 #include "cube.hpp"
 
-Vector Cube::local_normal_at(const Point local_p) const {
+Vector Cube::local_normal_at(const Point local_p, Intersection i) const {
     double maxc = std::max({ abs(local_p.x), abs(local_p.y), abs(local_p.z) });
 
     if (double_equal(maxc, abs(local_p.x))) {

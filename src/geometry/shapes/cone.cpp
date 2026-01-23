@@ -1,13 +1,13 @@
 #include "cone.hpp"
 
-Vector Cone::local_normal_at(const Point local_p) const {
+Vector Cone::local_normal_at(const Point local_p, Intersection i) const {
     auto dist = pow(local_p.x, 2) + pow(local_p.z, 2);
 
     // EPSILON necessary to prevent issues w/ point not being exactly on cap
-    if (dist < pow(maximum,2) && local_p.y >= maximum - EPSILON) {
+    if (dist < pow(maximum, 2) && local_p.y >= maximum - EPSILON) {
         return Vector(0, 1, 0);
     }
-    else if (dist < pow(minimum,2) && local_p.y <= minimum + EPSILON) {
+    else if (dist < pow(minimum, 2) && local_p.y <= minimum + EPSILON) {
         return Vector(0, -1, 0);
     }
 
@@ -62,7 +62,7 @@ IntersectionRecord Cone::local_intersect(const Ray local_r) const {
 bool Cone::check_cap(Ray r, double t, double plane_y) const {
     auto x = r.origin.x + t * r.dir.x;
     auto z = r.origin.z + t * r.dir.z;
-    return (pow(x, 2) + pow(z, 2)) <= pow(plane_y,2); 
+    return (pow(x, 2) + pow(z, 2)) <= pow(plane_y, 2);
 }
 
 void Cone::intersect_caps(Ray r, IntersectionRecord& xs) const {

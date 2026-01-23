@@ -40,6 +40,6 @@ struct Group : public Shape {
     }
 
 private:
-    Vector local_normal_at(const Point local_p) const override;
+    Vector local_normal_at(const Point local_p, Intersection i) const override;
     IntersectionRecord local_intersect(const Ray local_r) const override;
 };

@@ -1,7 +1,7 @@
 #include "group.hpp"
 #include "shapes.hpp"
 
-Vector Group::local_normal_at(const Point local_p) const {
+Vector Group::local_normal_at(const Point local_p, Intersection i) const {
     throw std::runtime_error("Group local_normal_at shouold not be used!\n");
 }
 

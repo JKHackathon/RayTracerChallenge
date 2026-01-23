@@ -9,9 +9,11 @@ struct ObjParser {
 public:
     int ignored_lines;
     std::vector<Point> vertices;
+    std::vector<Vector> normals;
 
     ObjParser() : ignored_lines(0) {
         vertices.push_back(Point(INFINITY, INFINITY, INFINITY));
+        normals.push_back(Vector(INFINITY, INFINITY, INFINITY));
         groups.emplace("DefaultGroup", std::make_unique<Group>());
     }
 

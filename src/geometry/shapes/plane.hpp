@@ -2,7 +2,7 @@
 
 struct Plane : public Shape {
 private:
-    Vector local_normal_at(const Point local_p) const override {
+    Vector local_normal_at(const Point local_p, Intersection i) const override {
         return Vector(0, 1, 0);
     }
 

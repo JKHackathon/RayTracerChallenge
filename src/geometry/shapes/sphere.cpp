@@ -1,6 +1,6 @@
 #include "sphere.hpp"
 
-Vector Sphere::local_normal_at(const Point local_p) const {
+Vector Sphere::local_normal_at(const Point local_p, Intersection i) const {
     return local_p - origin;
 }
 

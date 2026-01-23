@@ -1,6 +1,6 @@
 #include "cylinder.hpp"
 
-Vector Cylinder::local_normal_at(const Point local_p) const {
+Vector Cylinder::local_normal_at(const Point local_p, Intersection i) const {
     auto dist = pow(local_p.x, 2) + pow(local_p.z, 2);
 
     // EPSILON necessary to prevent issues w/ point not being exactly on cap

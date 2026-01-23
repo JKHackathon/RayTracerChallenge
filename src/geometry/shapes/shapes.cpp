@@ -1,9 +1,9 @@
 #include "shapes.hpp"
 #include "group.hpp"
 
-Vector Shape::normal_at(const Point world_p) const {
+Vector Shape::normal_at(const Point world_p, const Intersection i) const {
     Point local_p = this->world_to_object(world_p);
-    Vector local_n = this->local_normal_at(local_p);
+    Vector local_n = this->local_normal_at(local_p, i);
     return this->normal_to_world(local_n);
 }
 
