@@ -36,10 +36,10 @@ int main(int argc, char* argv[]) {
 }
 
 Canvas mesh_scene() {
-    auto light_u = std::make_unique<PointLight>(Point(2, 10, -5), Color(.9, .9, .9));
+    auto light_u = std::make_unique<PointLight>(Point(5, 20, -40), Color(.9, .9, .9));
     Camera camera(300, 300, .45);
     camera.transform = Transform::view_transform(
-        Point(10, 20, -80), Point(0, 0, 0), Vector(0, 1, 0));
+        Point(10, 30, -80), Point(0, 0, 0), Vector(0, 1, 0));
 
     ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/simple_teapot.obj");
     auto mesh_u = std::move(parser).obj_to_group();
@@ -96,6 +96,7 @@ Canvas group_scene() {
     World w;
     w.light = std::move(light_u);
     auto hex_model_u = hexagon();
+    hex_model_u.get()->transform = Transform::rotation_x(-M_PI/2);
     w.objects.emplace(hex_model_u.get(), std::move(hex_model_u));
     return camera.render(&w);
 }
