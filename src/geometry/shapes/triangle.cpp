@@ -1,5 +1,13 @@
 #include "triangle.hpp"
 
+BoundingBox Triangle::bounds_of() const {
+    BoundingBox bb;
+    bb.add_point(p1);
+    bb.add_point(p2);
+    bb.add_point(p3);
+    return bb;
+}
+
 Vector Triangle::local_normal_at(const Point local_p, Intersection i) const {
     return normal;
 }

@@ -29,6 +29,7 @@ add_executable(raytracer
                 src/scene/patterns.cpp
                 src/math/transformations.cpp
                 src/rendering/camera.cpp
+                src/accel/bounding_box.cpp
 )
 target_link_libraries(raytracer PRIVATE Boost::headers)
 
@@ -50,6 +51,7 @@ add_executable(bench_renders
                 src/scene/patterns.cpp
                 src/math/transformations.cpp
                 src/rendering/camera.cpp
+                src/accel/bounding_box.cpp
 )
 target_link_libraries(bench_renders PRIVATE Boost::headers)
 
@@ -72,6 +74,7 @@ add_executable(tests
                 tests/refraction.cpp
                 tests/groups.cpp
                 tests/triangles.cpp
+                tests/boundingbox.cpp
                 src/canvas.cpp
                 src/math/matrix.cpp
                 src/geometry/intersection.cpp
@@ -88,6 +91,7 @@ add_executable(tests
                 src/scene/patterns.cpp
                 src/math/transformations.cpp
                 src/rendering/camera.cpp
+                src/accel/bounding_box.cpp
 )
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain Boost::headers)

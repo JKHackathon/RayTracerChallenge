@@ -1,12 +1,25 @@
 #include "group.hpp"
 #include "shapes.hpp"
 
+BoundingBox Group::bounds_of() const {
+    BoundingBox bb;
+    for (auto& shape : shapes) {
+        BoundingBox child_box = shape.get()->parent_space_bounds_of();
+        bb.add_BB(child_box);
+    }
+    return bb;
+}
+
 Vector Group::local_normal_at(const Point local_p, Intersection i) const {
     throw std::runtime_error("Group local_normal_at shouold not be used!\n");
 }
 
 IntersectionRecord Group::local_intersect(const Ray local_r) const {
     IntersectionRecord xs;
+    if (!bounds_of().intersects(local_r)) {
+        return IntersectionRecord();
+    }
+
     for (const auto& shape : shapes) {
         xs.append_record(shape.get()->intersect(local_r));
     }

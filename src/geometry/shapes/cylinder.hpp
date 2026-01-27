@@ -7,7 +7,11 @@ struct Cylinder : public Shape {
     double maximum;
     bool closed;
 
-    Cylinder() : minimum(std::numeric_limits<double>::lowest()), maximum(std::numeric_limits<double>::max()), closed(false) {}
+    Cylinder() : minimum(MIN_DOUBLE), maximum(MAX_DOUBLE), closed(false) {}
+
+    BoundingBox bounds_of() const override {
+        return BoundingBox(Point(-1, minimum, -1), Point(1, maximum, 1));
+    }
 
 private:
     Vector local_normal_at(const Point local_p, Intersection i) const override;

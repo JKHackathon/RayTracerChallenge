@@ -1,6 +1,9 @@
 #include "shapes.hpp"
 
 struct Plane : public Shape {
+    BoundingBox bounds_of() const override {
+        return BoundingBox(Point(MIN_DOUBLE, 0, MIN_DOUBLE), Point(MAX_DOUBLE, 0, MAX_DOUBLE));
+    }
 private:
     Vector local_normal_at(const Point local_p, Intersection i) const override {
         return Vector(0, 1, 0);

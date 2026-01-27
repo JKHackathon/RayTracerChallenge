@@ -9,6 +9,8 @@ struct Cone : public Shape {
 
     Cone() : minimum(std::numeric_limits<double>::lowest()), maximum(std::numeric_limits<double>::max()), closed(false) {}
 
+    BoundingBox bounds_of() const override;
+
 private:
     Vector local_normal_at(const Point local_p, Intersection i) const override;
     IntersectionRecord local_intersect(const Ray local_r) const override;

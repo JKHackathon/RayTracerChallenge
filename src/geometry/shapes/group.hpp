@@ -39,6 +39,8 @@ struct Group : public Shape {
         shapes.push_back(std::move(shape));
     }
 
+    BoundingBox bounds_of() const override;
+
 private:
     Vector local_normal_at(const Point local_p, Intersection i) const override;
     IntersectionRecord local_intersect(const Ray local_r) const override;

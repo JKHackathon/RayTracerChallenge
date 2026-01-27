@@ -1,5 +1,10 @@
 #include "cone.hpp"
 
+BoundingBox Cone::bounds_of() const {
+    double limit = std::max(abs(minimum), abs(maximum));
+    return BoundingBox(Point(-limit, minimum, -limit), Point(limit, maximum, limit));
+}
+
 Vector Cone::local_normal_at(const Point local_p, Intersection i) const {
     auto dist = pow(local_p.x, 2) + pow(local_p.z, 2);
 

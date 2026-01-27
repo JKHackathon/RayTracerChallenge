@@ -14,6 +14,10 @@ public:
         : Shape(transform, material), origin(Point(0, 0, 0)), radius(1) {
     }
 
+    BoundingBox bounds_of() const override {
+        return BoundingBox(Point(-1, -1, -1), Point(1, 1, 1));
+    }
+
 private:
     Vector local_normal_at(const Point local_p, Intersection i) const override;
 

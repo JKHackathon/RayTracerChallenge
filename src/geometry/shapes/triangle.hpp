@@ -19,6 +19,7 @@ public:
 
     // TODO: should this go in intersectionrecord as a factory method
     // IntersectionRecord intersect_with_uv(double t, double u, double v) const;
+    BoundingBox bounds_of() const override;
 
 private:
     Vector local_normal_at(const Point local_p, Intersection i) const override;
