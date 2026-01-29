@@ -37,11 +37,44 @@ struct Group : public Shape {
         shape.get()->parent = this;
         // shapes.emplace(std::move(shape));
         shapes.push_back(std::move(shape));
+        invalidate_bb();
+    }
+
+    // Note: definitely overcomplicated, but still a fun experiment
+    // Could also require at least one shape inputted
+    template<typename... ShapePtrs>
+    void add_children(ShapePtrs... shape) requires (std::derived_from< // child of base class Shape
+        typename std::remove_cvref_t<ShapePtrs>::element_type, // element_type (ie unique_ptr, shared_ptr, etc)
+        Shape
+    > && ...) { // rvalue reference
+        ((shape.get()->parent = this), ...);
+        (shapes.push_back(std::move(shape)), ...);
+        invalidate_bb();
     }
 
     BoundingBox bounds_of() const override;
 
+    std::pair<std::vector<std::unique_ptr<Shape>>, std::vector<std::unique_ptr<Shape>>> partition_children();
+
+    void make_subgroup(std::vector<std::unique_ptr<Shape>>& shapes) {
+        auto sub_g_u = std::make_unique<Group>();
+        Group* subgroup = sub_g_u.get();
+        for (auto& shape : shapes) {
+            subgroup->add_child(std::move(shape));
+        }
+        add_child(std::move(sub_g_u));
+    }
+
+    void divide(int min_children) override;
+
 private:
+    // Cached bounding box
+    mutable BoundingBox bb;
+    mutable bool bb_is_valid;
+
     Vector local_normal_at(const Point local_p, Intersection i) const override;
     IntersectionRecord local_intersect(const Ray local_r) const override;
+    void invalidate_bb() const {
+        bb_is_valid = false;
+    }
 };

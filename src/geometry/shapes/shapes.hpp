@@ -29,9 +29,12 @@ public:
     Vector normal_to_world(Vector normal) const;
     virtual BoundingBox bounds_of() const = 0;
 
-    BoundingBox parent_space_bounds_of() {
+    BoundingBox parent_space_bounds_of() const {
         return bounds_of().transform(transform);
     }
+
+    virtual void divide(int min_children) {}
+
 private:
     virtual IntersectionRecord local_intersect(const Ray local_r) const = 0;
     virtual Vector local_normal_at(const Point local_p, Intersection i) const = 0;

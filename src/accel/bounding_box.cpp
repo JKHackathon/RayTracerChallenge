@@ -70,3 +70,31 @@ bool BoundingBox::intersects(Ray local_r) const {
 
     return tmin <= tmax;
 }
+
+std::pair<BoundingBox, BoundingBox> BoundingBox::split_bounds() const {
+    double dx = max.x - min.x;
+    double dy = max.y - min.y;
+    double dz = max.z - min.z;
+
+    double longest_axis = std::max(std::max(dx, dy), dz);
+
+    auto mid_min = min;
+    auto mid_max = max;
+
+    if (double_equal(longest_axis, dx)) {
+        mid_max.x = min.x + dx / 2;
+        mid_min.x = mid_max.x;
+    }
+    else if (double_equal(longest_axis, dy)){
+        mid_max.y = min.y + dy / 2;
+        mid_min.y = mid_max.y;
+    }
+    else {
+        mid_max.z = min.z + dz / 2;
+        mid_min.z = mid_max.z;
+    }
+
+    auto left = BoundingBox(min, mid_max);
+    auto right = BoundingBox(mid_min, max);
+    return { left,right };
+}

@@ -287,3 +287,154 @@ TEST_CASE("Intersecting ray+group doesn't test children if box is hit", "[accel]
     auto xs = shape.intersect(r);
     REQUIRE(child->saved_ray.has_value());
 }
+
+TEST_CASE("Splitting a perfect cube", "[accel][bounding_box][bvh]") {
+    BoundingBox box(Point(-1, -4, -5), Point(9, 6, 5));
+    auto [left, right] = box.split_bounds();
+    REQUIRE(left.min == Point(-1, -4, -5));
+    REQUIRE(left.max == Point(4, 6, 5));
+    REQUIRE(right.min == Point(4, -4, -5));
+    REQUIRE(right.max == Point(9, 6, 5));
+}
+
+TEST_CASE("Splitting an x-wide box", "[accel][bounding_box][bvh]") {
+    BoundingBox box(Point(-1, -2, -3), Point(9, 5.5, 3));
+    auto [left, right] = box.split_bounds();
+    REQUIRE(left.min == Point(-1, -2, -3));
+    REQUIRE(left.max == Point(4, 5.5, 3));
+    REQUIRE(right.min == Point(4, -2, -3));
+    REQUIRE(right.max == Point(9, 5.5, 3));
+}
+
+TEST_CASE("Splitting a y-wide box", "[accel][bounding_box][bvh]") {
+    BoundingBox box(Point(-1, -2, -3), Point(5, 8, 3));
+    auto [left, right] = box.split_bounds();
+    REQUIRE(left.min == Point(-1, -2, -3));
+    REQUIRE(left.max == Point(5, 3, 3));
+    REQUIRE(right.min == Point(-1, 3, -3));
+    REQUIRE(right.max == Point(5, 8, 3));
+}
+
+TEST_CASE("Splitting a z-wide box", "[accel][bounding_box][bvh]") {
+    BoundingBox box(Point(-1, -2, -3), Point(5, 3, 7));
+    auto [left, right] = box.split_bounds();
+    REQUIRE(left.min == Point(-1, -2, -3));
+    REQUIRE(left.max == Point(5, 3, 2));
+    REQUIRE(right.min == Point(-1, -2, 2));
+    REQUIRE(right.max == Point(5, 3, 7));
+}
+
+TEST_CASE("Partitioning a group's children", "[accel][bounding_box][bvh]") {
+    auto s1_u = std::make_unique<Sphere>();
+    Sphere* s1 = s1_u.get();
+    s1->transform = Transform::translation(-2, 0, 0);
+
+    auto s2_u = std::make_unique<Sphere>();
+    Sphere* s2 = s2_u.get();
+    s2->transform = Transform::translation(2, 0, 0);
+
+    auto s3_u = std::make_unique<Sphere>();
+    Sphere* s3 = s3_u.get();
+    Group g;
+    g.add_children(std::move(s1_u), std::move(s2_u), std::move(s3_u));
+
+    auto [left, right] = g.partition_children();
+
+    REQUIRE(g.shapes.size() == 1);
+    REQUIRE(g.shapes[0].get() == s3);
+
+    REQUIRE(left.size() == 1);
+    REQUIRE(left[0].get() == s1);
+
+    REQUIRE(right.size() == 1);
+    REQUIRE(right[0].get() == s2);
+}
+
+TEST_CASE("Creating a sub-group from a list of children", "[accel][bounding_box][bvh]") {
+    auto s1_u = std::make_unique<Sphere>();
+    Sphere* s1 = s1_u.get();
+    auto s2_u = std::make_unique<Sphere>();
+    Sphere* s2 = s2_u.get();
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.push_back(std::move(s1_u));
+    shapes.push_back(std::move(s2_u));
+    Group g;
+    g.make_subgroup(shapes);
+
+    REQUIRE(g.shapes.size() == 1);
+    auto subgroup = dynamic_cast<Group*>(g.shapes[0].get());
+    REQUIRE(subgroup->shapes.size() == 2);
+    REQUIRE(subgroup->shapes[0].get() == s1);
+    REQUIRE(subgroup->shapes[1].get() == s2);
+}
+
+// Essentially checks that it works, doesn't verify that nothing happens though
+TEST_CASE("Subdividing a primitive does nothing", "[accel][bounding_box][bvh]") {
+    Sphere shape;
+    shape.divide(1);
+}
+
+TEST_CASE("Subdividing a group partitions its children", "[accel][bounding_box][bvh]") {
+    auto s1_u = std::make_unique<Sphere>();
+    Sphere* s1 = s1_u.get();
+    s1->transform = Transform::translation(-2, -2, 0);
+
+    auto s2_u = std::make_unique<Sphere>();
+    Sphere* s2 = s2_u.get();
+    s2->transform = Transform::translation(-2, 2, 0);
+
+    auto s3_u = std::make_unique<Sphere>();
+    Sphere* s3 = s3_u.get();
+    s3->transform = Transform::scaling(4, 4, 4);
+
+    Group g;
+    g.add_children(std::move(s1_u), std::move(s2_u), std::move(s3_u));
+    g.divide(1);
+    REQUIRE(g.shapes.size() == 2);
+    REQUIRE(g.shapes[0].get() == s3);
+    auto subgroup = dynamic_cast<Group*>(g.shapes[1].get());
+    REQUIRE(subgroup->shapes.size() == 2);
+
+    auto subsubgroup1 = dynamic_cast<Group*>(subgroup->shapes[0].get());
+    auto subsubgroup2 = dynamic_cast<Group*>(subgroup->shapes[1].get());
+    REQUIRE(subsubgroup1->shapes.size() == 1);
+    REQUIRE(subsubgroup1->shapes[0].get() == s1);
+    REQUIRE(subsubgroup2->shapes.size() == 1);
+    REQUIRE(subsubgroup2->shapes[0].get() == s2);
+}
+
+TEST_CASE("Subdividing a group with too few children", "[accel][bounding_box][bvh]") {
+    auto s1_u = std::make_unique<Sphere>();
+    Sphere* s1 = s1_u.get();
+    s1->transform = Transform::translation(-2, 0, 0);
+
+    auto s2_u = std::make_unique<Sphere>();
+    Sphere* s2 = s2_u.get();
+    s2->transform = Transform::translation(2, 1, 0);
+
+    auto s3_u = std::make_unique<Sphere>();
+    Sphere* s3 = s3_u.get();
+    s3->transform = Transform::translation(2, -1, 0);
+    auto subgroup_u = std::make_unique<Group>();
+    Group* subgroup = subgroup_u.get();
+    subgroup->add_children(std::move(s1_u), std::move(s2_u), std::move(s3_u));
+
+    auto s4_u = std::make_unique<Sphere>();
+    Sphere* s4 = s4_u.get();
+
+    Group g;
+    g.add_children(std::move(subgroup_u), std::move(s4_u));
+    g.divide(3);
+    REQUIRE(g.shapes.size() == 2);
+    REQUIRE(g.shapes[0].get() == subgroup);
+    REQUIRE(g.shapes[1].get() == s4);
+
+    REQUIRE(subgroup->shapes.size() == 2);
+    auto subsubgroup1 = dynamic_cast<Group*>(subgroup->shapes[0].get());
+    auto subsubgroup2 = dynamic_cast<Group*>(subgroup->shapes[1].get());
+    REQUIRE(subsubgroup1->shapes.size() == 1);
+    REQUIRE(subsubgroup1->shapes[0].get() == s1);
+    REQUIRE(subsubgroup2->shapes.size() == 2);
+    REQUIRE(subsubgroup2->shapes[0].get() == s2);
+    REQUIRE(subsubgroup2->shapes[1].get() == s3);
+}

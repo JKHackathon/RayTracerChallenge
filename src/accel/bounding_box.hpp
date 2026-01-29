@@ -19,7 +19,10 @@ struct BoundingBox {
     bool contains_point(Point p) const;
     bool contains_bb(BoundingBox bb) const;
 
+    // TODO: why do I not automatically create a transformed bounding box?
     BoundingBox transform(Transform transformation) const;
 
     bool intersects(Ray local_r) const;
+
+    std::pair<BoundingBox, BoundingBox> split_bounds() const;
 };

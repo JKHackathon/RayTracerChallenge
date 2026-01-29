@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     Canvas canvas = mesh_scene();//reflection_and_refraction_scene(); //shadow_puppets_scene(); //glass_air_bubble_exact_scene(); //
 
     std::string ppm_data = canvas.to_ppm();
-    std::ofstream outputFile("smooth_teapot.ppm");
+    std::ofstream outputFile("complex_teapot_bounds.ppm");
     assert(outputFile.is_open());
     outputFile << ppm_data;
     return 0;
@@ -39,11 +39,12 @@ Canvas mesh_scene() {
     auto light_u = std::make_unique<PointLight>(Point(5, 20, -40), Color(.9, .9, .9));
     Camera camera(300, 300, .45);
     camera.transform = Transform::view_transform(
-        Point(10, 30, -80), Point(0, 0, 0), Vector(0, 1, 0));
+        Point(4, 10, -20), Point(0, 0, 0), Vector(0, 1, 0));
 
-    ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/simple_teapot.obj");
+    ObjParser parser = ObjParser::parse_obj_file("../tests/test_files/teapot.obj");
     auto mesh_u = std::move(parser).obj_to_group();
-    mesh_u.get()->transform = Transform::rotation_x(-M_PI / 2);
+    // mesh_u.get()->transform = Transform::rotation_x(-M_PI / 2);
+    mesh_u.get()->divide(10);
 
     World w;
     w.light = std::move(light_u);
